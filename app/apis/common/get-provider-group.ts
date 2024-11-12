@@ -1,4 +1,4 @@
-import HttpServer from '@/libs/http.server'
+import HttpInstance from '@/libs/http-instance'
 import { providerGroupSchema } from '@/schemas/general'
 
 type Params = {
@@ -10,7 +10,7 @@ type Params = {
 export const getProviderGroupRequest = async (params: Params) => {
   const { code, provider_name } = params
   try {
-    const { data } = await HttpServer().get('/providers/group/active', {
+    const { data } = await HttpInstance().get('/providers/group/active', {
       params: {
         code,
         status: 1,

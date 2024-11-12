@@ -1,4 +1,4 @@
-import HttpServer from '@/libs/http.server'
+import HttpInstance from '@/libs/http-instance'
 import { gameGroupSchema } from '@/schemas/general'
 
 type Params = {
@@ -8,7 +8,7 @@ type Params = {
 export const getGameGroupRequest = async (params: Params) => {
   const { currency } = params
   try {
-    const { data } = await HttpServer().get('/game-groups', {
+    const { data } = await HttpInstance().get('/game-groups', {
       params: {
         page: 1,
         limit: 10,

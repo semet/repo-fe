@@ -1,0 +1,31 @@
+.loginButton {
+  background-color: var(--login-bg-color);
+  background-image: var(--login-bg-image);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  color: var(--login-text-color);
+  border: 2px solid var(--login-border-color);
+}
+.loginButton:hover {
+  background-color: var(--login-bg-color-hover);
+}
+.loginButton:active {
+  background-color: var(--login-bg-color-active);
+}
+/* register */
+.registerButton {
+  background-color: var(--register-bg-color);
+  background-image: var(--register-bg-image);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  color: var(--register-text-color);
+  border: 2px solid var(--register-border-color);
+}
+.registerButton:hover {
+  background-color: var(--register-bg-color-hover);
+}
+.registerButton:active {
+  background-color: var(--register-bg-color-active);
+}

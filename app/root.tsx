@@ -25,12 +25,13 @@ import {
   getWebMetasRequest,
   getWebSettingsRequest
 } from './apis/common'
+import { LayoutProvider, StyleProvider } from './contexts'
 import i18next from './i18next.server'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const locale = await i18next.getLocale(request)
 
-  const languageSettings = await getLanguageSettingsRequest({
+  const languageSettings = getLanguageSettingsRequest({
     lang: locale
   })
   const styles = await getStyleRequest()
@@ -43,7 +44,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     styles: styles.data,
     webMeta: webMeta.data,
     webSettings: webSettings.data,
-    languageSettings: languageSettings.data,
+    languageSettings,
     ENV: {
       API_URL: process.env.API_URL,
       API_KEY: process.env.API_KEY
@@ -117,6 +118,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const { styles, ...rest } = useLoaderData<typeof loader>()
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -134,7 +136,11 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <HydrationBoundary state={dehydratedState}>
-        <Outlet />
+        <StyleProvider styles={styles}>
+          <LayoutProvider data={rest}>
+            <Outlet />
+          </LayoutProvider>
+        </StyleProvider>
       </HydrationBoundary>
       <ToastContainer />
       <ReactQueryDevtools initialIsOpen={false} />

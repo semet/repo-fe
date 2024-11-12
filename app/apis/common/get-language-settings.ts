@@ -1,4 +1,4 @@
-import HttpServer from '@/libs/http.server'
+import HttpInstance from '@/libs/http-instance'
 import { languageSettingsSchema } from '@/schemas/general'
 
 export const getLanguageSettingsRequest = async (params: { lang?: string }) => {
@@ -6,7 +6,7 @@ export const getLanguageSettingsRequest = async (params: { lang?: string }) => {
 
   const defaultLang = lang || 'en'
   try {
-    const { data } = await HttpServer().get(
+    const { data } = await HttpInstance().get(
       `languages/${defaultLang}/setting`,
       {
         cache: 'force-cache'

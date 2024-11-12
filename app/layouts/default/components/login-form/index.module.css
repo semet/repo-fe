@@ -1,0 +1,15 @@
+.loginButtonLg {
+  background-color: var(--login-bg-color-lg);
+  background-image: var(--login-bg-image-lg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  color: var(--login-text-color-lg);
+  border: 2px solid var(--login-border-color-lg);
+}
+.loginButtonLg:hover {
+  background-color: var(--login-bg-color-hover-lg);
+}
+.loginButtonLg:active {
+  background-color: var(--login-bg-color-active-lg);
+}
