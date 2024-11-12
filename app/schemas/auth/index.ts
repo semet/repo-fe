@@ -1,2 +1,2 @@
 export * from './login-schema'
-export * from './captcha'
+export * from './captcha-schema'

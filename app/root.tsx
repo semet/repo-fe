@@ -1,5 +1,4 @@
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
-// eslint-disable-next-line import/order
 import {
   Links,
   Meta,
@@ -8,17 +7,43 @@ import {
   ScrollRestoration,
   useLoaderData
 } from '@remix-run/react'
-
-import './tailwind.css'
+import {
+  HydrationBoundary,
+  QueryClient,
+  QueryClientProvider
+} from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ToastContainer } from 'react-toastify'
+import { useDehydratedState } from 'use-dehydrated-state'
+import './tailwind.css'
 
+import {
+  getLanguageSettingsRequest,
+  getStyleRequest,
+  getWebMetasRequest,
+  getWebSettingsRequest
+} from './apis/common'
 import i18next from './i18next.server'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const locale = await i18next.getLocale(request)
 
+  const languageSettings = await getLanguageSettingsRequest({
+    lang: locale
+  })
+  const styles = await getStyleRequest()
+
+  const webSettings = await getWebSettingsRequest()
+  const webMeta = await getWebMetasRequest()
+
   return {
     locale,
+    styles: styles.data,
+    webMeta: webMeta.data,
+    webSettings: webSettings.data,
+    languageSettings: languageSettings.data,
     ENV: {
       API_URL: process.env.API_URL,
       API_KEY: process.env.API_KEY
@@ -44,7 +69,7 @@ export const links: LinksFunction = () => [
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { locale } = useLoaderData<typeof loader>()
+  const { ENV, locale, webSettings } = useLoaderData<typeof loader>()
   const { i18n } = useTranslation()
   return (
     <html
@@ -57,6 +82,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"
+        ></meta>
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${webSettings?.web_google_analytics.value}`}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${webSettings?.web_google_analytics.value}', {
+                    page_path: window.location.pathname,
+                  });
+                `
+          }}
         />
         <Meta />
         <Links />
@@ -64,6 +105,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         {children}
         <ScrollRestoration getKey={(location) => location.pathname} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(ENV)}`
+          }}
+        />
         <Scripts />
       </body>
     </html>
@@ -71,5 +117,27 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 60 * 1000,
+            refetchOnMount: false,
+            refetchOnWindowFocus: false
+          }
+        }
+      })
+  )
+
+  const dehydratedState = useDehydratedState()
+  return (
+    <QueryClientProvider client={queryClient}>
+      <HydrationBoundary state={dehydratedState}>
+        <Outlet />
+      </HydrationBoundary>
+      <ToastContainer />
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  )
 }
