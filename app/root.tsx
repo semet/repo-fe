@@ -1,13 +1,34 @@
-import type { LinksFunction } from '@remix-run/node'
+import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
+// eslint-disable-next-line import/order
 import {
   Links,
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration
+  ScrollRestoration,
+  useLoaderData
 } from '@remix-run/react'
 
 import './tailwind.css'
+import { useTranslation } from 'react-i18next'
+
+import i18next from './i18next.server'
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const locale = await i18next.getLocale(request)
+
+  return {
+    locale,
+    ENV: {
+      API_URL: process.env.API_URL,
+      API_KEY: process.env.API_KEY
+    }
+  }
+}
+
+export const handle = {
+  i18n: 'common'
+}
 
 export const links: LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -23,20 +44,26 @@ export const links: LinksFunction = () => [
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { locale } = useLoaderData<typeof loader>()
+  const { i18n } = useTranslation()
   return (
-    <html lang="en">
+    <html
+      lang={locale}
+      dir={i18n.dir()}
+      className="scrollbar-thin scrollbar-track-gray-700 scrollbar-thumb-gray-600"
+    >
       <head>
         <meta charSet="utf-8" />
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1"
+          content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"
         />
         <Meta />
         <Links />
       </head>
       <body>
         {children}
-        <ScrollRestoration />
+        <ScrollRestoration getKey={(location) => location.pathname} />
         <Scripts />
       </body>
     </html>
