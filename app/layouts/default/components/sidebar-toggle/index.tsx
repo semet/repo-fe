@@ -5,8 +5,14 @@ import {
   MenuItems,
   Transition
 } from '@headlessui/react'
-import { Link, useFetcher, useNavigate } from '@remix-run/react'
-import { useEffect, useMemo } from 'react'
+import {
+  Await,
+  Link,
+  useFetcher,
+  useNavigate,
+  useRouteLoaderData
+} from '@remix-run/react'
+import { Suspense, useEffect, useMemo } from 'react'
 import { MdClose, MdMenu } from 'react-icons/md'
 import { toast } from 'react-toastify'
 
@@ -15,9 +21,9 @@ import { useUser } from '@/contexts'
 import {
   getAuthenticatedOtherItems,
   getGameIcons,
-  getOtherItems,
-  useGameGroup
+  getOtherItems
 } from '@/layouts/default'
+import { TRootLayoutLoader } from '@/types'
 
 type LogoutFetcher = {
   success: boolean
@@ -27,9 +33,12 @@ type LogoutFetcher = {
 }
 
 export const SidebarToggle = () => {
+  const loaderData = useRouteLoaderData<TRootLayoutLoader>(
+    'routes/_main+/_layout'
+  )
+
   const fetcher = useFetcher<LogoutFetcher>()
   const navigate = useNavigate()
-  const { data: gameGroup } = useGameGroup()
   const { player } = useUser()
   const categoryIcons = useMemo(() => getGameIcons({ size: 24 }), [])
 
@@ -91,22 +100,30 @@ export const SidebarToggle = () => {
                     </Link>
                   </MenuItem>
                 )}
-                {gameGroup?.data.map((menu) => (
-                  <MenuItem key={menu.id}>
-                    <Link
-                      className="flex items-center gap-3 px-6 py-4 text-sm font-medium hover:bg-white hover:text-black"
-                      to="/"
-                      onClick={close}
-                    >
-                      {categoryIcons[menu.code]?.icon ? (
-                        <span>{categoryIcons[menu.code].icon}</span>
-                      ) : (
-                        categoryIcons.default.icon
-                      )}
-                      <span>{menu.name}</span>
-                    </Link>
-                  </MenuItem>
-                ))}
+                <Suspense fallback={null}>
+                  <Await resolve={loaderData?.gameGroup}>
+                    {(gameGroupData) => (
+                      <>
+                        {gameGroupData?.data.map((menu) => (
+                          <MenuItem key={menu.id}>
+                            <Link
+                              className="flex items-center gap-3 px-6 py-4 text-sm font-medium hover:bg-white hover:text-black"
+                              to="/"
+                              onClick={close}
+                            >
+                              {categoryIcons[menu.code]?.icon ? (
+                                <span>{categoryIcons[menu.code].icon}</span>
+                              ) : (
+                                categoryIcons.default.icon
+                              )}
+                              <span>{menu.name}</span>
+                            </Link>
+                          </MenuItem>
+                        ))}
+                      </>
+                    )}
+                  </Await>
+                </Suspense>
               </div>
               <h2 className="my-3 px-6 text-lg font-semibold text-white">
                 Lainnya

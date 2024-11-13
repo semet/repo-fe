@@ -1,8 +1,15 @@
 import { LoaderFunctionArgs } from '@remix-run/node'
-import { Outlet, useLoaderData } from '@remix-run/react'
-import { Suspense } from 'react'
+import {
+  Outlet,
+  ShouldRevalidateFunctionArgs,
+  useLoaderData
+} from '@remix-run/react'
 
-import { getPlayerRequest } from '@/apis/common'
+import {
+  getGameGroupRequest,
+  getPlayerRequest,
+  getProviderGroupRequest
+} from '@/apis/common'
 import { UserProvider, useStyle } from '@/contexts'
 import {
   FooterContainer,
@@ -23,25 +30,47 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   try {
     let playerData: TPlayerResponse | undefined
-
+    const currencyCode =
+      playerData?.data?.account?.bank?.currency?.code?.toLowerCase() ?? 'idr'
+    const gameGroup = getGameGroupRequest({
+      currency: currencyCode
+    })
+    const providerGroup = getProviderGroupRequest({
+      currency: currencyCode
+    })
     if (accessToken && !isTokenExpires) {
       playerData = await getPlayerRequest({ accessToken })
     }
+
     return {
       accessToken,
-      player: playerData?.data
+      player: playerData?.data,
+      gameGroup: gameGroup,
+      providerGroup
     }
   } catch (err) {
     return catchLoaderError(err)
   }
 }
 
+export const shouldRevalidate = ({
+  actionResult
+}: ShouldRevalidateFunctionArgs) => {
+  return actionResult?.success === true
+}
+
 const MainLayout = () => {
   const loaderData = useLoaderData<typeof loader>()
+  const { accessToken, player } = loaderData
   const { styles } = useStyle()
   const style = extractStyle(styles).get('desktop_homepage_body')
   return (
-    <UserProvider value={loaderData}>
+    <UserProvider
+      value={{
+        accessToken,
+        player
+      }}
+    >
       <main
         className="h-full bg-cover bg-fixed bg-center bg-no-repeat"
         style={{
@@ -52,9 +81,7 @@ const MainLayout = () => {
           <HeaderTop />
           <HeaderCenter />
           <HeaderBottom />
-          <Suspense fallback={null}>
-            <HeaderSecondary />
-          </Suspense>
+          <HeaderSecondary />
         </HeaderPrimary>
         <div className="min-h-screen">
           <Outlet />

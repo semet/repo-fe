@@ -3,7 +3,7 @@ import { providerGroupSchema } from '@/schemas/general'
 
 type Params = {
   provider_name?: string
-  code: string
+  code?: string
   currency?: string
 }
 

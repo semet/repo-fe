@@ -12,4 +12,4 @@ export const gameGroupSchema = z.object({
 })
 
 export type TGameGroupResponse = z.infer<typeof gameGroupSchema>
-export type TGamGroup = TGameGroupResponse['data'][0]
+export type TGameGroup = TGameGroupResponse['data'][0]

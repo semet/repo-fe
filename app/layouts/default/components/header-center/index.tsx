@@ -1,8 +1,10 @@
+import { FC, PropsWithChildren } from 'react'
+
 import { useStyle } from '@/contexts'
 import { HeaderCenterLeft, HeaderCenterRight } from '@/layouts/default'
 import { convertHex, extractStyle } from '@/utils'
 
-export const HeaderCenter = () => {
+export const HeaderCenter: FC<PropsWithChildren> = () => {
   const { styles } = useStyle()
 
   const style = extractStyle(styles).get('desktop_homepage_header')

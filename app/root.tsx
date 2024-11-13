@@ -5,7 +5,9 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData
+  ShouldRevalidateFunctionArgs,
+  useLoaderData,
+  useRouteLoaderData
 } from '@remix-run/react'
 import {
   HydrationBoundary,
@@ -18,6 +20,7 @@ import { useTranslation } from 'react-i18next'
 import { ToastContainer } from 'react-toastify'
 import { useDehydratedState } from 'use-dehydrated-state'
 import './tailwind.css'
+import 'react-toastify/dist/ReactToastify.css'
 
 import {
   getLanguageSettingsRequest,
@@ -46,10 +49,16 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     webSettings: webSettings.data,
     languageSettings,
     ENV: {
-      API_URL: process.env.API_URL,
-      API_KEY: process.env.API_KEY
+      API_URL: process.env.API_URL ?? '',
+      API_KEY: process.env.API_KEY ?? ''
     }
   }
+}
+
+export const shouldRevalidate = ({
+  actionResult
+}: ShouldRevalidateFunctionArgs) => {
+  return actionResult?.success === true
 }
 
 export const handle = {
@@ -70,11 +79,11 @@ export const links: LinksFunction = () => [
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { ENV, locale, webSettings } = useLoaderData<typeof loader>()
+  const loaderData = useRouteLoaderData<typeof loader>('root')
   const { i18n } = useTranslation()
   return (
     <html
-      lang={locale}
+      lang={loaderData?.locale}
       dir={i18n.dir()}
       className="scrollbar-thin scrollbar-track-gray-700 scrollbar-thumb-gray-600"
     >
@@ -86,7 +95,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         ></meta>
         <script
           async
-          src={`https://www.googletagmanager.com/gtag/js?id=${webSettings?.web_google_analytics.value}`}
+          src={`https://www.googletagmanager.com/gtag/js?id=${loaderData?.webSettings?.web_google_analytics.value}`}
         />
         <script
           dangerouslySetInnerHTML={{
@@ -94,7 +103,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
                   gtag('js', new Date());
-                  gtag('config', '${webSettings?.web_google_analytics.value}', {
+                  gtag('config', '${loaderData?.webSettings?.web_google_analytics.value}', {
                     page_path: window.location.pathname,
                   });
                 `
@@ -108,7 +117,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <ScrollRestoration getKey={(location) => location.pathname} />
         <script
           dangerouslySetInnerHTML={{
-            __html: `window.ENV = ${JSON.stringify(ENV)}`
+            __html: `window.ENV = ${JSON.stringify(loaderData?.ENV)}`
           }}
         />
         <Scripts />
