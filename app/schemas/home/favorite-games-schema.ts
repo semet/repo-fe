@@ -27,5 +27,5 @@ export const favoriteGameSchema = z.object({
   )
 })
 
-export type TFavoriteGames = z.infer<typeof favoriteGameSchema>
-export type TFavoriteGamesData = TFavoriteGames['data'][0]
+export type TFavoriteGamesResponse = z.infer<typeof favoriteGameSchema>
+export type TFavoriteGames = TFavoriteGamesResponse['data'][0]

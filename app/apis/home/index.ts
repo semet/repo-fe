@@ -1,0 +1,6 @@
+export * from './get-banks'
+export * from './get-banner-carousel'
+export * from './get-favorite-games'
+export * from './get-last-played-games'
+export * from './get-promotion'
+export * from './get-providers'

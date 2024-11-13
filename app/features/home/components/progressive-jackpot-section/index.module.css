@@ -1,0 +1,6 @@
+.jackpot {
+  color: var(--jackpot-text-color);
+  background-image: var(--jackpot-bg-image);
+  background-color: var(--jackpot-bg-color);
+  border: 2px solid var(--jackpot-border-color);
+}
