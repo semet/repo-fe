@@ -10,7 +10,7 @@ export const loginSchema = z.object({
   captcha_solution: z.string().min(6, {
     message: 'Captcha must be at least 6 characters'
   }),
-  remember: z.boolean(),
+  remember: z.coerce.boolean(),
   captcha_id: z.string()
 })
 

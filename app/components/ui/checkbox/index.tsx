@@ -1,5 +1,6 @@
 import { useId } from 'react'
-import { useFormContext, get, FieldError } from 'react-hook-form'
+import { FieldError, get } from 'react-hook-form'
+import { useRemixFormContext } from 'remix-hook-form'
 import { twMerge } from 'tailwind-merge'
 
 import { InputProps } from './type'
@@ -25,7 +26,7 @@ export const Checkbox = <T extends Record<string, unknown>>(
   const {
     register,
     formState: { errors }
-  } = useFormContext()
+  } = useRemixFormContext()
 
   const generatedId = useId()
 

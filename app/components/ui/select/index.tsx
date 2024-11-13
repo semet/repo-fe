@@ -1,6 +1,7 @@
 import { useId } from 'react'
-import { Controller, FieldError, get, useFormContext } from 'react-hook-form'
+import { Controller, FieldError, get } from 'react-hook-form'
 import ReactSelect from 'react-select'
+import { useRemixFormContext } from 'remix-hook-form'
 import { useHydrated } from 'remix-utils/use-hydrated'
 import { twMerge } from 'tailwind-merge'
 
@@ -31,7 +32,7 @@ export const Select = <T extends Record<string, unknown>>(
   const {
     control,
     formState: { errors }
-  } = useFormContext()
+  } = useRemixFormContext()
 
   const error: FieldError = get(errors, name)
   return (

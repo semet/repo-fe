@@ -1,11 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useFetcher, useNavigate } from '@remix-run/react'
 import { FC, useEffect, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 import { CgSpinner } from 'react-icons/cg'
 import { RxReload } from 'react-icons/rx'
 import { toast } from 'react-toastify'
+import { RemixFormProvider, useRemixForm } from 'remix-hook-form'
 import { twMerge } from 'tailwind-merge'
 
 import { Checkbox, Input } from '@/components/ui'
@@ -36,7 +36,10 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
   })
 
   const { styles } = useStyle()
-  const formMethods = useForm<TLoginForm>({
+
+  const fetcher = useFetcher<{ success: boolean; message: string }>()
+
+  const formMethods = useRemixForm<TLoginForm>({
     defaultValues: {
       username: '',
       password: '',
@@ -44,12 +47,12 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
       remember: false,
       captcha_id: captchaData?.data?.captcha_id
     },
-    resolver: zodResolver(loginSchema)
+    resolver: zodResolver(loginSchema),
+    stringifyAllValues: false,
+    fetcher
   })
 
-  const { handleSubmit, setValue } = formMethods
-
-  const fetcher = useFetcher<{ success: boolean; message: string }>()
+  const { reset } = formMethods
   const navigate = useNavigate()
   useEffect(() => {
     if (fetcher.state === 'idle' && fetcher.data?.success) {
@@ -64,41 +67,52 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetcher, fetcher.data?.success, fetcher.state])
-  const onSubmit = handleSubmit((data) => {
-    const payload = {
-      captcha_id: data?.captcha_id,
-      captcha_solution: data.captcha_solution,
-      username: data.username,
-      password: data.password,
-      remember: data.remember
-    }
+  // const onSubmit = handleSubmit((data) => {
+  //   const payload = {
+  //     captcha_id: data?.captcha_id,
+  //     captcha_solution: data.captcha_solution,
+  //     username: data.username,
+  //     password: data.password,
+  //     remember: data.remember
+  //   }
 
-    const formData = new FormData()
-    formData.append(
-      'data',
-      JSON.stringify({
-        ...payload
-      })
-    )
-    fetcher.submit(data, {
-      method: 'post',
-      action: '/login'
-    })
-  })
+  //   const formData = new FormData()
+  //   formData.append(
+  //     'data',
+  //     JSON.stringify({
+  //       ...payload
+  //     })
+  //   )
+  //   fetcher.submit(data, {
+  //     method: 'post',
+  //     action: '/login'
+  //   })
+  // })
   useEffect(() => {
     if (!captchaData) return
-    setValue('captcha_id', captchaData?.data?.captcha_id)
+    reset({
+      captcha_id: captchaData?.data?.captcha_id
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [captchaData])
+  }, [captchaData?.data])
 
   const loginStylesRaw = extractStyle(styles).get('desktop_button_login')
   const loginButtonStyle = makeLoginButtonStyle(loginStylesRaw)
   return (
-    <FormProvider {...formMethods}>
+    <RemixFormProvider {...formMethods}>
       <fetcher.Form
-        onSubmit={onSubmit}
+        method="POST"
+        action="/login"
         className="flex flex-col gap-4"
       >
+        <Input<TLoginForm>
+          name="captcha_id"
+          containerClassName="hidden"
+          className="hidden"
+          type="hidden"
+          defaultValue={captchaData?.data?.captcha_id}
+          required
+        />
         <Input<TLoginForm>
           name="username"
           label="Username"
@@ -165,7 +179,9 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
           <Checkbox<TLoginForm>
             name="remember"
             label="Remember me"
+            defaultChecked
           />
+
           <Link
             to="/forgot-password"
             className="text-secondary underline"
@@ -189,6 +205,6 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
           )}
         </button>
       </fetcher.Form>
-    </FormProvider>
+    </RemixFormProvider>
   )
 }

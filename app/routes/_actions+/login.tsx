@@ -1,6 +1,7 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
+import { getValidatedFormData } from 'remix-hook-form'
 import { XiorError } from 'xior'
-import { ZodError } from 'zod'
 
 import { getPlayerRequest, loginRequest } from '@/apis/common'
 import {
@@ -9,38 +10,36 @@ import {
   generateToken2Cookie,
   generateTokenCookie
 } from '@/libs/token'
-import { loginSchema } from '@/schemas/auth'
+import { loginSchema, TLoginForm } from '@/schemas/auth'
 import { hashText } from '@/utils'
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   try {
-    const body = await request.formData()
-    const username = body.get('username')
-    const password = body.get('password')
-    const captcha_solution = body.get('captcha_solution')
-    const captcha_id = body.get('captcha_id')
-    const remember = true
+    const {
+      errors,
+      data: formData,
+      receivedValues: defaultValues
+    } = await getValidatedFormData<TLoginForm>(
+      request,
+      zodResolver(loginSchema),
+      true
+    )
 
-    const validated = loginSchema.safeParse({
-      captcha_solution,
-      captcha_id,
-      username,
-      password,
-      remember
-    })
-
-    if (validated.error) {
-      return Response.json(validated.error, { status: 400 })
+    if (errors) {
+      return Response.json(
+        { success: false, errors, defaultValues },
+        { status: 400 }
+      )
     } else {
       const hash = hashText({
-        ...validated.data
+        ...formData
       })
       const payload = {
-        ...validated.data,
+        ...formData,
         hash
       }
       const { data } = await loginRequest(payload)
-
+      const { remember } = formData
       const {
         token,
         token2,
@@ -106,17 +105,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         },
         {
           status: error?.response?.status
-        }
-      )
-    } else if (error instanceof ZodError) {
-      return Response.json(
-        {
-          success: false,
-          message: 'Invalid data',
-          errors: error.errors
-        },
-        {
-          status: 400
         }
       )
     } else {
