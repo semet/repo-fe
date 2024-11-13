@@ -2,8 +2,9 @@ import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { XiorError } from 'xior'
 import { ZodError } from 'zod'
 
-import { loginRequest } from '@/apis/common'
+import { getPlayerRequest, loginRequest } from '@/apis/common'
 import {
+  generateCurrencyCookie,
   generateRefreshTokenCookie,
   generateToken2Cookie,
   generateTokenCookie
@@ -55,6 +56,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
       const confirmHash = hashText(preHash)
       if (confirmHash === hashResponse) {
+        const { data } = await getPlayerRequest({
+          accessToken: token
+        })
+
         const tokenCookie = generateTokenCookie({
           remember,
           token
@@ -68,10 +73,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
           remember,
           token
         })
+
+        const currencyTokenCookie = generateCurrencyCookie({
+          currency: data.account.bank.currency.code.toLowerCase()
+        })
+
         const headers = new Headers()
         headers.append('Set-Cookie', await tokenCookie)
         headers.append('Set-Cookie', await token2Cookie)
         headers.append('Set-Cookie', await refreshTokenCookie)
+        headers.append('Set-Cookie', await currencyTokenCookie)
 
         return Response.json(
           {

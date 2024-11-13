@@ -1,6 +1,11 @@
 import { decodeJwt } from 'jose'
 
-import { refreshTokenCookie, token2Cookie, tokenCookie } from './cookie.server'
+import {
+  currencyTokenCookie,
+  refreshTokenCookie,
+  token2Cookie,
+  tokenCookie
+} from './cookie.server'
 
 export const generateTokenCookie = (params: {
   token: string
@@ -49,6 +54,14 @@ export const generateRefreshTokenCookie = (params: {
   })
 }
 
+export const generateCurrencyCookie = (params: { currency: string }) => {
+  const { currency } = params
+
+  return currencyTokenCookie.serialize(currency, {
+    expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+  })
+}
+
 export const checkIfTokenExpires = (token?: string): boolean => {
   if (!token) return true
   const decodedToken = decodeJwt(token)
@@ -66,10 +79,12 @@ export const handleToken = async (request: Request) => {
   const accessToken = await tokenCookie.parse(headers.get('Cookie'))
   const token2 = await token2Cookie.parse(headers.get('Cookie'))
   const refreshToken = await refreshTokenCookie.parse(headers.get('Cookie'))
+  const currency = await currencyTokenCookie.parse(headers.get('Cookie'))
   const isTokenExpires = checkIfTokenExpires(accessToken)
   return {
-    isTokenExpires,
     accessToken,
+    currency,
+    isTokenExpires,
     refreshToken,
     token2
   }

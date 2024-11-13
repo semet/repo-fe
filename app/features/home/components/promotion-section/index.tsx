@@ -1,20 +1,16 @@
-import { useLayout, useUser } from '@/contexts'
-import {
-  PromotionCard,
-  SectionContainer,
-  useGetPromotion
-} from '@/features/home'
+import { FC } from 'react'
 
-export const PromotionSection = () => {
-  const { language } = useLayout()
-  const { player } = useUser()
-  const { data: promotions } = useGetPromotion({
-    language: language ?? 'id',
-    currency: player?.account?.bank?.currency?.code?.toLowerCase() ?? 'idr'
-  })
+import { PromotionCard, SectionContainer } from '@/features/home'
+import { TPromotion } from '@/schemas/home'
+
+type Props = {
+  promotions: TPromotion[]
+}
+
+export const PromotionSection: FC<Props> = ({ promotions }) => {
   return (
     <SectionContainer title="Hadiah & Promosi">
-      {promotions?.data?.map((promotion) => (
+      {promotions?.map((promotion) => (
         <PromotionCard
           promotion={promotion}
           key={promotion.id}

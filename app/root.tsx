@@ -7,6 +7,7 @@ import {
   ScrollRestoration,
   ShouldRevalidateFunctionArgs,
   useLoaderData,
+  useRouteError,
   useRouteLoaderData
 } from '@remix-run/react'
 import {
@@ -154,5 +155,26 @@ export default function App() {
       <ToastContainer />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
+  )
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError()
+  // eslint-disable-next-line no-console
+  console.error(error)
+  return (
+    <html lang="en">
+      <head>
+        <title>Oh no!</title>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <div>
+          <h1 className="text-5xl">Shit. error</h1>
+        </div>
+        <Scripts />
+      </body>
+    </html>
   )
 }

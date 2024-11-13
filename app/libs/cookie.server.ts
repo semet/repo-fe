@@ -27,3 +27,10 @@ export const refreshTokenCookie = createCookie(refreshToken, {
   secrets: [process.env.COOKIE_SECRET || 'default-secret'],
   path: '/'
 })
+
+export const currencyTokenCookie = createCookie('currency', {
+  httpOnly: false,
+  sameSite: 'lax',
+  secure: process.env.NODE_ENV === 'production',
+  path: '/'
+})

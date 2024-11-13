@@ -21,13 +21,13 @@ import {
   HeaderSecondary,
   HeaderTop
 } from '@/layouts/default'
+import { ErrorWrapper } from '@/layouts/error'
 import { handleToken } from '@/libs/token'
 import { TPlayerResponse } from '@/schemas/general'
 import { catchLoaderError, extractStyle } from '@/utils'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { isTokenExpires, accessToken } = await handleToken(request)
-
   try {
     let playerData: TPlayerResponse | undefined
     const currencyCode =
@@ -96,3 +96,7 @@ const MainLayout = () => {
 }
 
 export default MainLayout
+
+export function ErrorBoundary() {
+  return <ErrorWrapper title="Error caught in _layout.tsx" />
+}

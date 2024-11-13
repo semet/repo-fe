@@ -23,6 +23,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       'Set-Cookie',
       `${refreshToken}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`
     )
+    responseHeaders.append(
+      'Set-Cookie',
+      `currency=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`
+    )
 
     return Response.json(
       { success: true },

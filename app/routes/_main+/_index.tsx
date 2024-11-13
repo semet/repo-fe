@@ -6,6 +6,7 @@ import {
   getBanks,
   getBannerCarousel,
   getFavoriteGames,
+  getPromotion,
   getProviders
 } from '@/apis/home'
 import { useUser } from '@/contexts'
@@ -24,6 +25,7 @@ import {
   ProvidersSection
 } from '@/features/home'
 import i18next from '@/i18next.server'
+import { ErrorWrapper } from '@/layouts/error'
 import { handleToken } from '@/libs/token'
 
 export const meta: MetaFunction = () => {
@@ -36,7 +38,8 @@ export const meta: MetaFunction = () => {
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const locale = await i18next.getLocale(request)
-  const { isTokenExpires, accessToken } = await handleToken(request)
+  const { isTokenExpires, accessToken, currency } = await handleToken(request)
+
   const bannersData = getBannerCarousel({
     language: locale ?? 'id'
   })
@@ -48,16 +51,21 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
           accessToken
         })
       : undefined
+  const promotions = getPromotion({
+    currency: currency ?? 'idr',
+    language: locale ?? 'id'
+  })
   return {
     bannersData,
     banks,
     favoriteGames,
-    providers
+    providers,
+    promotions
   }
 }
 
 const Home = () => {
-  const { bannersData, banks, providers, favoriteGames } =
+  const { bannersData, banks, providers, promotions, favoriteGames } =
     useLoaderData<typeof loader>()
   const { player, accessToken } = useUser()
   return (
@@ -84,13 +92,18 @@ const Home = () => {
       )}
 
       <Suspense fallback={<PaymentMethodSkeleton />}>
-        <Await resolve={banks}>
+        <Await
+          resolve={banks}
+          errorElement={<div>Error fetching banks</div>}
+        >
           {(banks) => <PaymentMethodsSection banks={banks} />}
         </Await>
       </Suspense>
 
       <Suspense fallback={<PromotionSkeleton />}>
-        <PromotionSection />
+        <Await resolve={promotions}>
+          {({ data }) => <PromotionSection promotions={data} />}
+        </Await>
       </Suspense>
 
       <Suspense fallback={<ProviderSkeleton />}>
@@ -103,3 +116,7 @@ const Home = () => {
 }
 
 export default Home
+
+export function ErrorBoundary() {
+  return <ErrorWrapper title="Error caught in _index.tsx" />
+}

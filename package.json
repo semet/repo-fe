@@ -42,6 +42,7 @@
     "react-icons": "^5.3.0",
     "react-select": "^5.8.3",
     "react-toastify": "^10.0.6",
+    "remix-hook-form": "^5.1.1",
     "remix-i18next": "^6.4.1",
     "remix-utils": "^7.7.0",
     "tailwind-merge": "^2.5.4",
