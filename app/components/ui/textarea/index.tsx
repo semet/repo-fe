@@ -3,10 +3,10 @@ import { FieldError, get } from 'react-hook-form'
 import { useRemixFormContext } from 'remix-hook-form'
 import { twMerge } from 'tailwind-merge'
 
-import { InputProps } from './type'
+import { TextareaProps } from './type'
 
-export const Input = <T extends Record<string, unknown>>(
-  props: InputProps<T>
+export const Textarea = <T extends Record<string, unknown>>(
+  props: TextareaProps<T>
 ) => {
   const {
     id,
@@ -14,13 +14,10 @@ export const Input = <T extends Record<string, unknown>>(
     rules,
     className,
     containerClassName,
-    rightNode,
     label,
     labelClassName,
     errorClassName,
     required,
-    type = 'text',
-
     ...rest
   } = props
 
@@ -48,22 +45,18 @@ export const Input = <T extends Record<string, unknown>>(
           {label} {required && <span className="text-rose-500">*</span>}
         </label>
       )}
-      <div className="relative flex overflow-hidden rounded border has-[:focus]:border-blue-400">
-        <input
-          type={type}
-          id={id ?? generatedId}
-          className={twMerge([
-            'w-full border-none text-gray-700 outline-none ring-0 focus:ring-0 disabled:bg-gray-200 disabled:text-gray-400',
-            error
-              ? 'border-rose-500 ring-rose-500'
-              : 'border-gray-300 ring-gray-300',
-            className
-          ])}
-          {...register(name, rules)}
-          {...rest}
-        />
-        {rightNode && rightNode}
-      </div>
+      <textarea
+        id={id ?? generatedId}
+        className={twMerge([
+          'w-full rounded border-none text-gray-700 outline-none ring-0 focus:ring-0 disabled:bg-gray-200 disabled:text-gray-400',
+          error
+            ? 'border-rose-500 ring-rose-500'
+            : 'border-gray-300 ring-gray-300',
+          className
+        ])}
+        {...register(name, rules)}
+        {...rest}
+      />
       {error && (
         <span
           className={twMerge([

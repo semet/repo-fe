@@ -5,7 +5,6 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  ShouldRevalidateFunctionArgs,
   useLoaderData,
   useRouteError,
   useRouteLoaderData
@@ -56,11 +55,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 }
 
-export const shouldRevalidate = ({
-  actionResult
-}: ShouldRevalidateFunctionArgs) => {
-  return actionResult?.success === true
-}
+export const shouldRevalidate = () => false
 
 export const handle = {
   i18n: 'common'

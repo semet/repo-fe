@@ -55,10 +55,10 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
   const { reset } = formMethods
   const navigate = useNavigate()
   useEffect(() => {
-    if (fetcher.state === 'idle' && fetcher.data?.success) {
+    if (fetcher.data?.success) {
+      onCLose()
       fetcher.load('/')
       navigate('.', { replace: true })
-      onCLose()
     }
 
     if (fetcher.state === 'idle' && !fetcher.data?.success) {
@@ -102,7 +102,7 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
     <RemixFormProvider {...formMethods}>
       <fetcher.Form
         method="POST"
-        action="/login"
+        action="/actions/login"
         className="flex flex-col gap-4"
       >
         <Input<TLoginForm>

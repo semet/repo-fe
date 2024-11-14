@@ -54,7 +54,12 @@ export const generateRefreshTokenCookie = (params: {
   })
 }
 
-export const generateCurrencyCookie = (params: { currency: string }) => {
+export const generateCurrencyCookie = (params: {
+  currency: {
+    code: string
+    id: string
+  }
+}) => {
   const { currency } = params
 
   return currencyTokenCookie.serialize(currency, {

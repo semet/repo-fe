@@ -54,9 +54,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 }
 
 export const shouldRevalidate = ({
-  actionResult
+  actionResult,
+  defaultShouldRevalidate
 }: ShouldRevalidateFunctionArgs) => {
-  return actionResult?.success === true
+  if (actionResult?.success) {
+    return true
+  }
+  return defaultShouldRevalidate
 }
 
 const MainLayout = () => {

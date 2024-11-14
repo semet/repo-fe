@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const createDepositSchema = z.object({
   agent_note: z.string().optional(),
-  amount: z.string(),
+  amount: z.number(),
   bank: z.object({
     label: z.string(),
     value: z.string()
@@ -17,7 +17,7 @@ export const createDepositSchema = z.object({
   player_id: z.string(),
   player_note: z.string().nullable(),
   provider_id: z.number().optional(),
-  transaction_category_id: z.string()
+  transaction_category_id: z.number()
 })
 
 export const depositResponseSchema = z.object({

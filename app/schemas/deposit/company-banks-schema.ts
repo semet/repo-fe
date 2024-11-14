@@ -14,7 +14,7 @@ export const companyBanksSchema = z.object({
         id: z.string(),
         name: z.string(),
         code: z.string(),
-        category: z.string(),
+        category: z.enum(['BANK', 'QRIS', 'VA', 'EWALLET', 'PULSA', 'CRYPTO']),
         image_name: z.string(),
         status: z.number(),
         player_min_deposit: z.number(),

@@ -52,7 +52,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         })
       : undefined
   const promotions = getPromotion({
-    currency: currency ?? 'idr',
+    currency: currency?.code ?? 'idr',
     language: locale ?? 'id'
   })
   return {

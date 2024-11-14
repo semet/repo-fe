@@ -169,7 +169,7 @@ export const SidebarToggle = () => {
               </div>
               {player && (
                 <fetcher.Form
-                  action="/logout"
+                  action="/actions/logout"
                   method="post"
                   className="mt-2 px-6"
                 >

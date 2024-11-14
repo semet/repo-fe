@@ -74,7 +74,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         })
 
         const currencyTokenCookie = generateCurrencyCookie({
-          currency: data.account.bank.currency.code.toLowerCase()
+          currency: {
+            code: data.account.bank.currency.code.toLowerCase(),
+            id: data.account.bank.currency_id
+          }
         })
 
         const headers = new Headers()
