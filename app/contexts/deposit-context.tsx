@@ -1,4 +1,5 @@
-import { createContext, ReactNode, useContext, useMemo } from 'react'
+import { useNavigate, useParams } from '@remix-run/react'
+import { createContext, ReactNode, useContext, useEffect, useMemo } from 'react'
 
 import {
   DpBankIcon,
@@ -39,6 +40,7 @@ const DepositContext = createContext<DepositContextType | null>(null)
 
 const DepositProvider = ({ children, values }: ProviderProps) => {
   const { banks, companyBanks } = values
+  const { type } = useParams<{ type: TDepositPath }>()
   const { webSettings } = useLayout()
   const groupedBanks = useMemo(() => {
     return banks
@@ -155,15 +157,29 @@ const DepositProvider = ({ children, values }: ProviderProps) => {
         icon: <DpCryptoIcon />
       })
     }
-
     return items
   }, [webSettings, groupedBanks, groupedCompanyBanks])
+  const sortedSidebarItems = sidebarItems.sort((a, b) =>
+    a.label.localeCompare(b.label)
+  )
+
+  const navigate = useNavigate()
+  const availableLinks = sidebarItems.map(({ link }) => link)
+
+  useEffect(() => {
+    if (!type || (type && !availableLinks.includes(type))) {
+      navigate(`/deposit/${availableLinks[0]}`, {
+        replace: true
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type])
 
   const providerValues = {
     ...values,
     groupedBanks,
     groupedCompanyBanks,
-    sidebarItems
+    sidebarItems: sortedSidebarItems
   }
 
   return (

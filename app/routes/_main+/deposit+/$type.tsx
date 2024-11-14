@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, redirect } from '@remix-run/node'
+import { LoaderFunctionArgs } from '@remix-run/node'
 import { useParams } from '@remix-run/react'
 
 import {
@@ -7,15 +7,9 @@ import {
   DepositQrisForm,
   DepositVaForm
 } from '@/features/deposit'
-import { depositPathSchema, TDepositPath } from '@/schemas/deposit'
+import { TDepositPath } from '@/schemas/deposit'
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
-  const parsedParams = depositPathSchema.safeParse(params.type)
-
-  if (!parsedParams.success) {
-    throw redirect('/deposit')
-  }
-
+export const loader = async (_: LoaderFunctionArgs) => {
   return {
     success: true
   }
@@ -23,6 +17,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 const DepositPage = () => {
   const { type } = useParams<{ type: TDepositPath }>()
+
   return (
     type && (
       <>
