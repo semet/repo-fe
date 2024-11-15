@@ -1,19 +1,17 @@
+/* eslint-disable no-console */
 import { LoaderFunctionArgs, redirect } from '@remix-run/node'
-import { Await, Outlet, useLoaderData, useRevalidator } from '@remix-run/react'
-import { EventSourcePolyfill } from 'event-source-polyfill'
-import { startTransition, Suspense, useEffect } from 'react'
-import { useEventSource } from 'remix-utils/sse/react'
+import { Await, useLoaderData } from '@remix-run/react'
+import { Suspense } from 'react'
 
 import {
   getBankByCurrencyRequest,
   getCompanyBankAccounts
 } from '@/apis/deposit'
 import { PageContainer } from '@/components/ui'
-import { DepositProvider } from '@/contexts'
-import { DepositSidebar } from '@/features/deposit'
-import { emitter } from '@/libs/emitter.server'
+import { DepositProvider, useUser } from '@/contexts'
+import { DepositContent, DepositSidebar } from '@/features/deposit'
+import { createEventSource } from '@/libs/event-source.server'
 import { handleToken } from '@/libs/token'
-import { TSseData } from '@/schemas/deposit'
 import { catchLoaderError } from '@/utils'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -34,41 +32,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     })
   ])
 
-  function createEventSource() {
-    const eventSource = new EventSourcePolyfill('https://be.i88.dev/sse/pl', {
-      headers: {
-        Authorization: `Bearer ${token2}`
-      },
-      //one hour timeout
-      heartbeatTimeout: 3600000
-    })
-    eventSource.onopen = () => {
-      // eslint-disable-next-line no-console
-      console.log('SSE Connected 🚀🚀')
-    }
-    eventSource.onmessage = (event) => {
-      emitter.emit('deposit', event.data)
-    }
-
-    eventSource.onerror = ({ type, target }) => {
-      // eslint-disable-next-line no-console
-      eventSource.close()
-      // eslint-disable-next-line no-console
-      console.error('SSE error 💥💥', type)
-      // eslint-disable-next-line no-console
-      console.error('SSE error 💥💥', target)
-      // Retry connection after a delay
-      setTimeout(() => {
-        // eslint-disable-next-line no-console
-        console.log('Reconnecting...')
-        createEventSource() // Reinitialize EventSource
-      }, 5000)
-    }
-
-    return eventSource
-  }
-
-  createEventSource()
+  createEventSource({ token2 })
   try {
     return {
       data
@@ -80,20 +44,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 const DepositLayout = () => {
   const { data: loaderData } = useLoaderData<typeof loader>()
-
-  const { revalidate } = useRevalidator()
-  const data = useEventSource('/stream/deposit', {
-    event: 'deposit-event',
-    enabled: true
-  })
-  const sseData =
-    data !== null && typeof data === 'string'
-      ? (JSON.parse(data) as TSseData)
-      : null
-  useEffect(() => {
-    startTransition(() => revalidate())
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- "we know better" — Moishi
-  }, [data])
+  const { sseData } = useUser()
 
   const isDepositPending = sseData?.data?.deposit?.some((deposit) =>
     [1, 4].includes(deposit.status)
@@ -119,7 +70,7 @@ const DepositLayout = () => {
                       </h1>
                     </div>
                   ) : (
-                    <Outlet />
+                    <DepositContent />
                   )}
                 </div>
               </main>

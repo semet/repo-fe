@@ -68,6 +68,7 @@ const MainLayout = () => {
   const loaderData = useLoaderData<typeof loader>()
   const { accessToken, token2, player } = loaderData
   const { styles } = useStyle()
+
   const style = extractStyle(styles).get('desktop_homepage_body')
   return (
     <UserProvider

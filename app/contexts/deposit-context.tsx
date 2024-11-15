@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from '@remix-run/react'
+import { useSearchParams } from '@remix-run/react'
 import { createContext, ReactNode, useContext, useEffect, useMemo } from 'react'
 
 import {
@@ -9,7 +9,12 @@ import {
   DpQrisIcon,
   DpVaIcon
 } from '@/components/icons'
-import { TBanksByCurrency, TCompanyBank, TDepositPath } from '@/schemas/deposit'
+import {
+  depositPathSchema,
+  TBanksByCurrency,
+  TCompanyBank,
+  TDepositPath
+} from '@/schemas/deposit'
 
 import { useLayout } from './layout-context'
 
@@ -40,7 +45,6 @@ const DepositContext = createContext<DepositContextType | null>(null)
 
 const DepositProvider = ({ children, values }: ProviderProps) => {
   const { banks, companyBanks } = values
-  const { type } = useParams<{ type: TDepositPath }>()
   const { webSettings } = useLayout()
   const groupedBanks = useMemo(() => {
     return banks
@@ -159,21 +163,20 @@ const DepositProvider = ({ children, values }: ProviderProps) => {
     }
     return items
   }, [webSettings, groupedBanks, groupedCompanyBanks])
+
   const sortedSidebarItems = sidebarItems.sort((a, b) =>
     a.label.localeCompare(b.label)
   )
-
-  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tab = searchParams.get('tab')
   const availableLinks = sidebarItems.map(({ link }) => link)
-
+  const validatedParams = depositPathSchema.safeParse(tab)
   useEffect(() => {
-    if (!type || (type && !availableLinks.includes(type))) {
-      navigate(`/deposit/${availableLinks[0]}`, {
-        replace: true
-      })
+    if (!tab || !validatedParams.success) {
+      setSearchParams({ tab: availableLinks[0] })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type])
+  }, [tab])
 
   const providerValues = {
     ...values,

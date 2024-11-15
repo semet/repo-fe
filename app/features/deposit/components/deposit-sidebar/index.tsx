@@ -19,7 +19,7 @@ export const DepositSidebar = () => {
             ])}
           >
             <Link
-              to={`/deposit/${link}`}
+              to={`/deposit?tab=${link}`}
               className="block p-3"
             >
               <div className="flex items-center">
