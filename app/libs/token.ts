@@ -2,6 +2,7 @@ import { decodeJwt } from 'jose'
 
 import {
   currencyTokenCookie,
+  promotionTokenCookie,
   refreshTokenCookie,
   token2Cookie,
   tokenCookie
@@ -85,10 +86,12 @@ export const handleToken = async (request: Request) => {
   const token2 = await token2Cookie.parse(headers.get('Cookie'))
   const refreshToken = await refreshTokenCookie.parse(headers.get('Cookie'))
   const currency = await currencyTokenCookie.parse(headers.get('Cookie'))
+  const showPromotion = await promotionTokenCookie.parse(headers.get('Cookie'))
   const isTokenExpires = checkIfTokenExpires(accessToken)
   return {
     accessToken,
     currency,
+    showPromotion,
     isTokenExpires,
     refreshToken,
     token2

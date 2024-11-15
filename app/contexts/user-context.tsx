@@ -5,6 +5,7 @@ import { TPlayer } from '@/schemas/general'
 type LayoutContextType = {
   player?: TPlayer
   accessToken?: string
+  token2?: string
 }
 
 type ProviderProps = {
@@ -12,6 +13,7 @@ type ProviderProps = {
   value: {
     player?: TPlayer
     accessToken?: string
+    token2?: string
   }
 }
 

@@ -1,4 +1,6 @@
 export * from './deposit-sidebar'
+export * from './deposit-content'
+export * from './deposit-skeleton'
 export * from './deposit-bank-form'
 export * from './deposit-crypto-form'
 export * from './deposit-qris-form'

@@ -30,6 +30,7 @@ import {
 } from './apis/common'
 import { LayoutProvider, StyleProvider } from './contexts'
 import i18next from './i18next.server'
+import { promotionTokenCookie } from './libs/cookie.server'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const locale = await i18next.getLocale(request)
@@ -42,17 +43,25 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const webSettings = await getWebSettingsRequest()
   const webMeta = await getWebMetasRequest()
 
-  return {
-    locale,
-    styles: styles.data,
-    webMeta: webMeta.data,
-    webSettings: webSettings.data,
-    languageSettings,
-    ENV: {
-      API_URL: process.env.API_URL ?? '',
-      API_KEY: process.env.API_KEY ?? ''
+  const showPromotion = webSettings.data.show_promotion.value
+  return Response.json(
+    {
+      locale,
+      styles: styles.data,
+      webMeta: webMeta.data,
+      webSettings: webSettings.data,
+      languageSettings,
+      ENV: {
+        API_URL: process.env.API_URL ?? '',
+        API_KEY: process.env.API_KEY ?? ''
+      }
+    },
+    {
+      headers: {
+        'Set-Cookie': await promotionTokenCookie.serialize(showPromotion)
+      }
     }
-  }
+  )
 }
 
 export const shouldRevalidate = () => false

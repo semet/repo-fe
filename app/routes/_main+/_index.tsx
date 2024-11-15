@@ -45,16 +45,17 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   })
   const banks = getBanks()
   const providers = getProviders()
+
+  const promotions = getPromotion({
+    currency: currency?.code ?? 'idr',
+    language: locale ?? 'id'
+  })
   const favoriteGames =
     accessToken && !isTokenExpires
       ? getFavoriteGames({
           accessToken
         })
       : undefined
-  const promotions = getPromotion({
-    currency: currency?.code ?? 'idr',
-    language: locale ?? 'id'
-  })
   return {
     bannersData,
     banks,
@@ -81,7 +82,7 @@ const Home = () => {
 
       <ProgressiveJackpotSection />
 
-      {accessToken && player !== undefined && (
+      {accessToken && player !== undefined && favoriteGames !== undefined && (
         <Suspense fallback={<FavoriteGameSkeleton />}>
           <Await resolve={favoriteGames}>
             {(favoriteGames) => (
@@ -112,6 +113,7 @@ const Home = () => {
         </Await>
       </Suspense>
     </div>
+    // <></>
   )
 }
 

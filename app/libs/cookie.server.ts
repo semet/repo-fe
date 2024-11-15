@@ -34,3 +34,9 @@ export const currencyTokenCookie = createCookie('currency', {
   secure: process.env.NODE_ENV === 'production',
   path: '/'
 })
+export const promotionTokenCookie = createCookie('showPromotion', {
+  httpOnly: false,
+  sameSite: 'lax',
+  secure: process.env.NODE_ENV === 'production',
+  path: '/'
+})

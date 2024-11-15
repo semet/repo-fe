@@ -27,7 +27,7 @@ import { TPlayerResponse } from '@/schemas/general'
 import { catchLoaderError, extractStyle } from '@/utils'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { isTokenExpires, accessToken } = await handleToken(request)
+  const { isTokenExpires, accessToken, token2 } = await handleToken(request)
   try {
     let playerData: TPlayerResponse | undefined
     const currencyCode =
@@ -44,6 +44,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
     return {
       accessToken,
+      token2,
       player: playerData?.data,
       gameGroup: gameGroup,
       providerGroup
@@ -65,14 +66,15 @@ export const shouldRevalidate = ({
 
 const MainLayout = () => {
   const loaderData = useLoaderData<typeof loader>()
-  const { accessToken, player } = loaderData
+  const { accessToken, token2, player } = loaderData
   const { styles } = useStyle()
   const style = extractStyle(styles).get('desktop_homepage_body')
   return (
     <UserProvider
       value={{
         accessToken,
-        player
+        player,
+        token2
       }}
     >
       <main
