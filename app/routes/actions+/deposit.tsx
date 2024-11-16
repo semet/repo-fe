@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ActionFunctionArgs } from '@remix-run/node'
+import { ActionFunctionArgs, data } from '@remix-run/node'
 import { getValidatedFormData } from 'remix-hook-form'
 
 import HttpInstance from '@/libs/http-instance'
@@ -28,16 +28,20 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     transaction_category_id: formData.transaction_category_id,
     player_id: formData.player_id,
     deposit_type: formData.deposit_type,
-    bank: formData.bank.value,
-    company_bank_account_id: formData.company_bank_account_id.value,
+    bank: formData.bank?.value,
+    company_bank_account_id: formData.company_bank_account_id?.value,
     player_note: formData.player_note,
     amount: Number(formData.amount)
   }
 
   try {
-    const { data } = await HttpInstance(accessToken).post('/deposits', payload)
-    return Response.json({ success: true, data }, { status: 201 })
+    const { data: responseData } = await HttpInstance(accessToken).post(
+      '/deposits',
+      payload
+    )
+    return data({ success: true, responseData }, { status: 201 })
+    return null
   } catch (error) {
-    return Response.json({ success: false, error }, { status: 500 })
+    return data({ success: false, error }, { status: 500 })
   }
 }

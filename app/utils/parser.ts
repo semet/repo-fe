@@ -1,3 +1,5 @@
+import { ChangeEvent } from 'react'
+
 export const parseLanguageFromHeaders = (headers: Headers) => {
   const language = headers
     .get('Accept-Language')
@@ -60,4 +62,14 @@ export const flattenObject = <T extends Record<string, unknown>>(obj: T) => {
     {}
   )
   return flattedObject
+}
+
+export const inputNumberParser = (event: ChangeEvent<HTMLInputElement>) => {
+  const { value } = event.target
+
+  const cleanedValue = value.replace(/\D/g, '')
+
+  event.target.value = cleanedValue
+
+  return cleanedValue
 }

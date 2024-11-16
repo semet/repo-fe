@@ -27,7 +27,7 @@ export const DepositBankForm = () => {
       bonus_id: selectedPromotion.id ?? undefined
     },
     resolver: zodResolver(createDepositSchema),
-    stringifyAllValues: false,
+    stringifyAllValues: true,
     submitConfig: {
       action: '/actions/deposit'
     },
@@ -35,7 +35,6 @@ export const DepositBankForm = () => {
   })
 
   const { watch, setValue, handleSubmit } = formMethods
-
   const {
     bank: watchedBank,
     amount: watchedAmount,
@@ -81,7 +80,7 @@ export const DepositBankForm = () => {
   const depositFee = selectedCompanyBank?.cuts ?? 0
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <div className="flex items-end justify-between gap-2">
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <span className="text-white">
@@ -104,7 +103,7 @@ export const DepositBankForm = () => {
           // action="/actions/deposit"
           onSubmit={handleSubmit}
         >
-          <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-4 lg:grid-cols-2">
             <Select<TCreateDeposit>
               required
               labelClassName="text-white"
@@ -129,7 +128,7 @@ export const DepositBankForm = () => {
                 <FaRegCopy className="text-2xl text-white" />
               </button>
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-4">
               <Input<TCreateDeposit>
                 required
                 name="amount"
@@ -138,14 +137,20 @@ export const DepositBankForm = () => {
                 inputMode="numeric"
                 labelClassName="text-white"
                 pattern="[0-9]*"
+                // rules={{
+                //   onChange: (event) => inputNumberParser(event)
+                // }}
               />
               <AmountSelector
                 onClick={(amount) => {
-                  setValue('amount', Number(watchedAmount) + Number(amount))
+                  setValue(
+                    'amount',
+                    (Number(watchedAmount) + Number(amount)).toString()
+                  )
                 }}
               />
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-4">
               <TransferAmount
                 currencyCode={currencyCode}
                 realAmount={realAmount}
@@ -163,14 +168,7 @@ export const DepositBankForm = () => {
               label="Berita"
               labelClassName="text-white"
             />
-            {/* Hidden inputs */}
-            {/* <Input<TCreateDeposit>
-              containerClassName="hidden"
-              className="hidden"
-              type="hidden"
-              name="transaction_category_id"
-              defaultValue={2}
-            /> */}
+
             <Input<TCreateDeposit>
               containerClassName="hidden"
               className="hidden"
@@ -185,20 +183,20 @@ export const DepositBankForm = () => {
               name="deposit_type"
               defaultValue={'bank_transfer'}
             />
-            <div className="col-span-2 mx-auto mt-14 flex gap-4">
-              <button
-                type="reset"
-                className="w-32 rounded-full bg-secondary py-2 text-gray-800"
-              >
-                Deposit
-              </button>
-              <button
-                type="submit"
-                className="w-32 rounded-full bg-sky-400 py-2 text-white"
-              >
-                Deposit
-              </button>
-            </div>
+          </div>
+          <div className="mt-14 flex justify-center gap-4">
+            <button
+              type="reset"
+              className="w-32 rounded-full bg-secondary py-2 text-gray-800"
+            >
+              Deposit
+            </button>
+            <button
+              type="submit"
+              className="w-32 rounded-full bg-sky-400 py-2 text-white"
+            >
+              Deposit
+            </button>
           </div>
         </fetcher.Form>
       </RemixFormProvider>

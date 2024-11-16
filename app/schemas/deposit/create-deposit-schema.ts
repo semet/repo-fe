@@ -2,17 +2,49 @@ import { z } from 'zod'
 
 export const createDepositSchema = z.object({
   agent_note: z.string().optional(),
-  amount: z.number(),
-  bank: z.object({
-    label: z.string(),
-    value: z.string()
-  }),
+  amount: z
+    .string()
+    .min(1, {
+      message: 'Amount is required'
+    })
+    .refine(
+      (value) => {
+        return !isNaN(Number(value))
+      },
+      {
+        message: 'Amount is required'
+      }
+    ),
+  bank: z
+    .object({
+      label: z.string(),
+      value: z.string()
+    })
+    .or(z.undefined())
+    .refine(
+      (value) => {
+        return value !== undefined
+      },
+      {
+        message: 'Bank is required'
+      }
+    ),
+  company_bank_account_id: z
+    .object({
+      label: z.string(),
+      value: z.string()
+    })
+    .or(z.undefined())
+    .refine(
+      (value) => {
+        return value !== undefined
+      },
+      {
+        message: 'Company Bank Account is required'
+      }
+    ),
   balance: z.number().optional(),
   bonus_id: z.string().optional(),
-  company_bank_account_id: z.object({
-    label: z.string(),
-    value: z.string()
-  }),
   deposit_type: z.enum(['crypto', 'qris', 'va', 'bank_transfer']),
   player_id: z.string(),
   player_note: z.string().nullable(),

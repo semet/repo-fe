@@ -6,7 +6,7 @@ type Props = {
 
 export const AmountSelector: FC<Props> = ({ onClick }) => {
   return (
-    <div className="grid grid-cols-4 gap-2">
+    <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
       {Array.from([10, 50, 100, 500]).map((amount) => (
         <button
           key={amount}
@@ -15,7 +15,7 @@ export const AmountSelector: FC<Props> = ({ onClick }) => {
             event.preventDefault()
             onClick(amount)
           }}
-          className="rounded-md border-2 border-sky-600 px-4 py-2 text-sky-600 hover:bg-white"
+          className="rounded-md border-2 border-sky-600 py-2 text-sky-600 hover:bg-white"
         >
           +{amount}
         </button>
