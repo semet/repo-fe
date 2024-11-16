@@ -1,5 +1,6 @@
-import { Field, Label, Radio, RadioGroup } from '@headlessui/react'
+import { Radio, RadioGroup } from '@headlessui/react'
 import { useState } from 'react'
+import { MdCheckCircleOutline, MdOutlineCircle } from 'react-icons/md'
 
 import { ModalDialog } from '@/components/ui'
 import { useDeposit } from '@/contexts'
@@ -8,11 +9,11 @@ export const PromotionPopup = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const { promotions, selectedPromotion, setSelectedPromotion } = useDeposit()
   const refinedPromotions = [
-    ...promotions,
     {
       id: null,
       title: 'Deposit tanpa promosi'
-    }
+    },
+    ...promotions
   ]
   return (
     <>
@@ -25,28 +26,33 @@ export const PromotionPopup = () => {
       <ModalDialog
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        title="Login"
         dialogClassName="pt-40"
         panelClassName="w-1/2 flex flex-col gap-4"
       >
         <RadioGroup
           value={selectedPromotion}
           onChange={setSelectedPromotion}
-          aria-label="Server size"
+          aria-label="Select Promotion"
+          className="space-y-4"
         >
           {refinedPromotions.map((promotion) => (
-            <Field
+            <Radio
               key={promotion.id}
-              className="flex items-center gap-2"
+              value={promotion}
+              className="group relative flex cursor-pointer rounded-lg border bg-white px-5 py-4 text-gray-800 transition data-[checked]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white focus:outline-none"
             >
-              <Radio
-                value={promotion}
-                className="group flex size-5 items-center justify-center rounded-full border bg-white data-[checked]:bg-blue-400"
-              >
-                <span className="invisible size-2 rounded-full bg-white group-data-[checked]:visible" />
-              </Radio>
-              <Label>{promotion.title}</Label>
-            </Field>
+              {({ checked }) => (
+                <div className="flex items-center gap-4">
+                  {checked ? (
+                    <MdCheckCircleOutline className="text-3xl text-gray-500" />
+                  ) : (
+                    <MdOutlineCircle className="text-3xl text-gray-400" />
+                  )}
+
+                  <div>{promotion.title}</div>
+                </div>
+              )}
+            </Radio>
           ))}
         </RadioGroup>
       </ModalDialog>

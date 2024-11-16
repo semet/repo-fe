@@ -6,7 +6,7 @@ import { twMerge } from 'tailwind-merge'
 type TProps = PropsWithChildren<{
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
-  title: string
+  title?: string
   dialogClassName?: string
   panelClassName?: string
 }>
@@ -34,7 +34,7 @@ export const ModalDialog: FC<TProps> = (props) => {
         className={twMerge(['rounded bg-white p-6 shadow-lg', panelClassName])}
       >
         <div className="flex items-center justify-between">
-          <DialogTitle className="font-bold">{title}</DialogTitle>
+          {title && <DialogTitle className="font-bold">{title}</DialogTitle>}
           <button onClick={() => setIsOpen(false)}>
             <IoCloseOutline className="text-3xl text-gray-500 hover:text-gray-700" />
           </button>
