@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs } from '@remix-run/node'
+import { data, LoaderFunctionArgs } from '@remix-run/node'
 import { Await, MetaFunction, useLoaderData } from '@remix-run/react'
 import { Suspense } from 'react'
 
@@ -39,7 +39,6 @@ export const meta: MetaFunction = () => {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const locale = await i18next.getLocale(request)
   const { isTokenExpires, accessToken, currency } = await handleToken(request)
-
   const bannersData = getBannerCarousel({
     language: locale ?? 'id'
   })
@@ -56,19 +55,19 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
           accessToken
         })
       : undefined
-  return {
+  return data({
     bannersData,
     banks,
     favoriteGames,
     providers,
     promotions
-  }
+  })
 }
 
 const Home = () => {
   const { bannersData, banks, providers, promotions, favoriteGames } =
     useLoaderData<typeof loader>()
-  const { player, accessToken } = useUser()
+  const { accessToken } = useUser()
   return (
     <div className="flex flex-col gap-10">
       <Suspense fallback={<BannerCarouselSkeleton />}>
@@ -82,7 +81,7 @@ const Home = () => {
 
       <ProgressiveJackpotSection />
 
-      {accessToken && player !== undefined && favoriteGames !== undefined && (
+      {accessToken && favoriteGames !== undefined && (
         <Suspense fallback={<FavoriteGameSkeleton />}>
           <Await resolve={favoriteGames}>
             {(favoriteGames) => (

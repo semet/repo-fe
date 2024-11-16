@@ -1,15 +1,8 @@
-import { LoaderFunctionArgs } from '@remix-run/node'
-import {
-  Outlet,
-  ShouldRevalidateFunctionArgs,
-  useLoaderData
-} from '@remix-run/react'
+import { data, LoaderFunctionArgs } from '@remix-run/node'
+import { Outlet, useLoaderData, useRevalidator } from '@remix-run/react'
+import { startTransition, useEffect } from 'react'
 
-import {
-  getGameGroupRequest,
-  getPlayerRequest,
-  getProviderGroupRequest
-} from '@/apis/common'
+import { getPlayerRequest } from '@/apis/common'
 import { UserProvider, useStyle } from '@/contexts'
 import {
   FooterContainer,
@@ -22,54 +15,58 @@ import {
   HeaderTop
 } from '@/layouts/default'
 import { ErrorWrapper } from '@/layouts/error'
+import { createEventSource } from '@/libs/event-source.server'
 import { handleToken } from '@/libs/token'
-import { TPlayerResponse } from '@/schemas/general'
 import { catchLoaderError, extractStyle } from '@/utils'
 
+// NOTE: setting cache headers will cache everything, including the SSE connection.
+// so, we we refresh the page, the SSE connection will not be reconnected
+
+// export const headers: HeadersFunction = () => {
+//   return {
+//     'Cache-Control': 'max-age=3600, s-maxage=3600, stale-while-revalidate'
+//   }
+// }
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { isTokenExpires, accessToken, token2 } = await handleToken(request)
+  const { accessToken, token2 } = await handleToken(request)
+
   try {
-    let playerData: TPlayerResponse | undefined
-    const currencyCode =
-      playerData?.data?.account?.bank?.currency?.code?.toLowerCase() ?? 'idr'
-    const gameGroup = getGameGroupRequest({
-      currency: currencyCode
-    })
-    const providerGroup = getProviderGroupRequest({
-      currency: currencyCode
-    })
-    if (accessToken && !isTokenExpires) {
-      playerData = await getPlayerRequest({ accessToken })
+    const playerData = accessToken
+      ? await getPlayerRequest({ accessToken })
+      : undefined
+    if (token2) {
+      createEventSource({ token2 })
     }
 
-    return {
+    return data({
       accessToken,
       token2,
-      player: playerData?.data,
-      gameGroup: gameGroup,
-      providerGroup
-    }
-  } catch (err) {
-    return catchLoaderError(err)
+      player: playerData?.data
+    })
+  } catch (error) {
+    return catchLoaderError(error)
   }
 }
 
-export const shouldRevalidate = ({
-  actionResult,
-  defaultShouldRevalidate
-}: ShouldRevalidateFunctionArgs) => {
-  if (actionResult?.success) {
-    return true
-  }
-  return defaultShouldRevalidate
-}
+// IMPORTANT: if we disable the `shouldRevalidate` function, the page will not revalidate, meaning SSE will not be reconnected upon page refresh
+// the trade off is, run _layout loader (meaning revalidate it) on every navigation of child routes inside it, but keeping SSE connected
+// or disable _layout loader revalidation, but SSE will not be reconnected upon page refresh
+export const shouldRevalidate = () => true
 
 const MainLayout = () => {
   const loaderData = useLoaderData<typeof loader>()
   const { accessToken, token2, player } = loaderData
   const { styles } = useStyle()
-
   const style = extractStyle(styles).get('desktop_homepage_body')
+  // console.log('playerInLayout', player)
+  const { revalidate } = useRevalidator()
+  useEffect(() => {
+    startTransition(() => {
+      revalidate()
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken])
   return (
     <UserProvider
       value={{

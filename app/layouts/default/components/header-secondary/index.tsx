@@ -1,25 +1,22 @@
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
-import { Await, useRouteLoaderData } from '@remix-run/react'
-import { Suspense, useMemo, useState } from 'react'
+import { Await } from '@remix-run/react'
+import { startTransition, Suspense, useMemo, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 import { PromotionIcon, ReferralIcon } from '@/components/icons'
-import { useStyle } from '@/contexts'
+import { useLayout, useStyle } from '@/contexts'
 import {
   getGameIcons,
   HeaderSecondarySkeleton,
   PlayNowCard
 } from '@/layouts/default'
-import { TRootLayoutLoader } from '@/types'
 import { convertHex, extractStyle } from '@/utils'
 
 import { PlayNowSkeleton } from './skeleton'
 
 export const HeaderSecondary = () => {
-  const loaderData = useRouteLoaderData<TRootLayoutLoader>(
-    'routes/_main+/_layout'
-  )
   const [gameGroupCode, setGameGroupCode] = useState<string>('')
+  const { gameGroups, providerGroups } = useLayout()
 
   const { styles: styleData } = useStyle()
   const categoryIcons = useMemo(() => getGameIcons({}), [])
@@ -42,10 +39,10 @@ export const HeaderSecondary = () => {
       }}
     >
       <Suspense fallback={<HeaderSecondarySkeleton />}>
-        <Await resolve={loaderData?.gameGroup}>
-          {(gameGroupData) => (
+        <Await resolve={gameGroups}>
+          {({ data: gameGroupData }) => (
             <>
-              {gameGroupData?.data.map((menu) => (
+              {gameGroupData.map((menu) => (
                 <Popover
                   className="relative"
                   key={menu.id}
@@ -53,7 +50,9 @@ export const HeaderSecondary = () => {
                   {({ open }) => (
                     <>
                       <PopoverButton
-                        onClick={() => setGameGroupCode(menu.code)}
+                        onClick={() =>
+                          startTransition(() => setGameGroupCode(menu.code))
+                        }
                         style={{
                           backgroundColor: open
                             ? convertHex(
@@ -92,10 +91,10 @@ export const HeaderSecondary = () => {
                             </>
                           }
                         >
-                          <Await resolve={loaderData?.providerGroup}>
-                            {(providerGroupData) =>
-                              providerGroupData?.data
-                                .filter(
+                          <Await resolve={providerGroups}>
+                            {({ data: providerGroupData }) =>
+                              providerGroupData
+                                ?.filter(
                                   (provider) =>
                                     provider.game_group.code === gameGroupCode
                                 )

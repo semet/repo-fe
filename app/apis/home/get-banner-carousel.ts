@@ -11,15 +11,14 @@ type Params = {
 export const getBannerCarousel = async (params: Params) => {
   const { language, showCentral, currency } = params
   try {
-    const { data } = await HttpInstance().get('/banners/activ', {
+    const { data } = await HttpInstance().get('/banners/active', {
       params: {
         language,
         type: 1,
         central: showCentral || 'false',
         sort: 'sequence:asc',
         currency
-      },
-      cache: 'force-cache'
+      }
     })
     return bannerSchema.parse(data)
   } catch (error) {

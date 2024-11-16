@@ -8,7 +8,7 @@ type TProps = {
 export const ErrorWrapper: FC<TProps> = ({ title }) => {
   const error = useRouteError()
   // eslint-disable-next-line no-console
-  // console.error(error)
+  // console.error('SHIT', error?.response)
   return (
     <div
       style={{

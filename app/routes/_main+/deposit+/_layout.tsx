@@ -1,5 +1,9 @@
-/* eslint-disable no-console */
-import { LoaderFunctionArgs, redirect } from '@remix-run/node'
+import {
+  data,
+  HeadersFunction,
+  LoaderFunctionArgs,
+  redirect
+} from '@remix-run/node'
 import { Await, useLoaderData } from '@remix-run/react'
 import { Suspense } from 'react'
 
@@ -10,19 +14,24 @@ import {
 import { PageContainer } from '@/components/ui'
 import { DepositProvider, useUser } from '@/contexts'
 import { DepositContent, DepositSidebar } from '@/features/deposit'
-import { createEventSource } from '@/libs/event-source.server'
 import { handleToken } from '@/libs/token'
 import { catchLoaderError } from '@/utils'
 
+//NOTE:: we can cache this _layout page to make subsequent navigation between deposit pages faster
+export const headers: HeadersFunction = () => {
+  return {
+    'Cache-Control': 'max-age=3600, s-maxage=3600, stale-while-revalidate'
+  }
+}
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { isTokenExpires, accessToken, currency, token2 } =
-    await handleToken(request)
+  const { isTokenExpires, accessToken, currency } = await handleToken(request)
   const isAuthenticated = accessToken && !isTokenExpires
   if (!isAuthenticated) {
     throw redirect('/')
   }
 
-  const data = Promise.all([
+  const loaderData = Promise.all([
     getBankByCurrencyRequest({
       accessToken,
       currencyId: currency?.id
@@ -31,19 +40,17 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       accessToken
     })
   ])
-
-  createEventSource({ token2 })
   try {
-    return {
-      data
-    }
+    return data({
+      loaderData
+    })
   } catch (error) {
     return catchLoaderError(error)
   }
 }
 
 const DepositLayout = () => {
-  const { data: loaderData } = useLoaderData<typeof loader>()
+  const { loaderData } = useLoaderData<typeof loader>()
   const { sseData } = useUser()
 
   const isDepositPending = sseData?.data?.deposit?.some((deposit) =>

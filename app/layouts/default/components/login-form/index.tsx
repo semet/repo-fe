@@ -9,9 +9,10 @@ import { RemixFormProvider, useRemixForm } from 'remix-hook-form'
 import { twMerge } from 'tailwind-merge'
 
 import { Checkbox, Input } from '@/components/ui'
-import { useStyle } from '@/contexts'
-import { useGetCaptcha } from '@/layouts/default'
+import { useStyle, useUser } from '@/contexts'
+import { useCaptchaQuery } from '@/queries/general'
 import { loginSchema, TLoginForm } from '@/schemas/auth'
+import { TPlayer } from '@/schemas/general'
 import { extractStyle } from '@/utils'
 
 import css from './index.module.css'
@@ -31,13 +32,17 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
     refetch: refetchCaptcha,
     isLoading: isLoadingCaptcha,
     isRefetching: isRefetchingCaptcha
-  } = useGetCaptcha({
+  } = useCaptchaQuery({
     action: 'login'
   })
 
   const { styles } = useStyle()
 
-  const fetcher = useFetcher<{ success: boolean; message: string }>()
+  const fetcher = useFetcher<{
+    success: boolean
+    message: string
+    player?: TPlayer
+  }>()
 
   const formMethods = useRemixForm<TLoginForm>({
     defaultValues: {
@@ -54,15 +59,18 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
 
   const { reset } = formMethods
   const navigate = useNavigate()
+  const { setPlayer } = useUser()
   useEffect(() => {
     if (fetcher.data?.success) {
-      onCLose()
-      fetcher.load('/')
+      // fetcher.load('/')
+      setPlayer(fetcher.data?.player)
       navigate('.', { replace: true })
+      onCLose()
     }
 
     if (fetcher.state === 'idle' && !fetcher.data?.success) {
       refetchCaptcha()
+      setPlayer(undefined)
       toast.error(fetcher.data?.message)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

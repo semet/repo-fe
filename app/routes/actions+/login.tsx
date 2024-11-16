@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
+import { ActionFunctionArgs, data, LoaderFunctionArgs } from '@remix-run/node'
 import { getValidatedFormData } from 'remix-hook-form'
 import { XiorError } from 'xior'
 
@@ -38,14 +38,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         ...formData,
         hash
       }
-      const { data } = await loginRequest(payload)
+      const { data: responseData } = await loginRequest(payload)
       const { remember } = formData
       const {
         token,
         token2,
         refresh_token: refreshToken,
         hash: hashResponse
-      } = data
+      } = responseData
       const preHash = {
         refresh_token: refreshToken || undefined,
         token,
@@ -55,7 +55,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
       const confirmHash = hashText(preHash)
       if (confirmHash === hashResponse) {
-        const { data } = await getPlayerRequest({
+        const { data: playerData } = await getPlayerRequest({
           accessToken: token
         })
 
@@ -75,8 +75,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
         const currencyTokenCookie = generateCurrencyCookie({
           currency: {
-            code: data.account.bank.currency.code.toLowerCase(),
-            id: data.account.bank.currency_id
+            code: playerData.account.bank.currency.code.toLowerCase(),
+            id: playerData.account.bank.currency_id
           }
         })
 
@@ -86,10 +86,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         headers.append('Set-Cookie', await refreshTokenCookie)
         headers.append('Set-Cookie', await currencyTokenCookie)
 
-        return Response.json(
+        return data(
           {
             success: true,
-            message: 'Login success'
+            message: 'Login success',
+            player: playerData
           },
           {
             headers,
@@ -101,7 +102,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
   } catch (error) {
     if (error instanceof XiorError && error?.response?.status === 401) {
-      return Response.json(
+      return data(
         {
           success: false,
           message: 'Invalid credentials'
@@ -111,7 +112,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         }
       )
     } else {
-      return Response.json(
+      return data(
         {
           success: false,
           message: 'Internal server error'

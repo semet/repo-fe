@@ -1,4 +1,4 @@
-import { ActionFunctionArgs } from '@remix-run/node'
+import { ActionFunctionArgs, data } from '@remix-run/node'
 import { XiorError } from 'xior'
 
 import { userCredentialKeys } from '@/configs/cookies'
@@ -28,7 +28,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       `currency=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`
     )
 
-    return Response.json(
+    return data(
       { success: true },
       { headers: responseHeaders, status: 200, statusText: 'OK' }
     )
@@ -49,7 +49,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         )
       }
     }
-    return Response.json(
+    return data(
       {
         message: 'Something went wrong',
         success: false

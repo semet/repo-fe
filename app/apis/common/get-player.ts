@@ -13,7 +13,12 @@ export const getPlayerRequest = async (params: Params) => {
   const playerId = decodedToken ? decodedToken.aud : undefined
 
   try {
-    const { data } = await HttpInstance(accessToken).get(`/players/${playerId}`)
+    const { data } = await HttpInstance(accessToken).get(
+      `/players/${playerId}`,
+      {
+        cache: 'no-store'
+      }
+    )
     return playerSchema.parse(data)
   } catch (err) {
     handleError(err)

@@ -5,6 +5,9 @@ type Params = {
   provider_name?: string
   code?: string
   currency?: string
+  provider_group_id?: string
+  game_group_id?: string[]
+  orderBySequence?: boolean
 }
 
 export const getProviderGroupRequest = async (params: Params) => {

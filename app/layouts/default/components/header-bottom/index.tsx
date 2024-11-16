@@ -11,7 +11,7 @@ export const HeaderBottom = () => {
   const style = extractStyle(styleData).get('desktop_homepage_headerMainBox')
   return (
     <Fragment>
-      {player !== undefined ? (
+      {player ? (
         <div
           className="flex justify-end gap-4 px-6 py-2"
           style={

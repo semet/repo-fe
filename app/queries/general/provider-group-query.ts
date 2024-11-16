@@ -6,22 +6,18 @@ import { generalKeys } from '@/factories/general'
 
 type Params = {
   provider_name?: string
-  code: string
 }
 
-export const useProviderGroup = (params: Params) => {
-  const { code, provider_name } = params
-
+export const useProviderGroupQuery = (params?: Params) => {
   const { player } = useUser()
   const currency = player?.account?.bank?.currency?.code?.toLowerCase() ?? 'idr'
   return useQuery({
-    queryKey: generalKeys.providerGroup(code),
+    queryKey: generalKeys.providerGroup(),
     queryFn: () =>
       getProviderGroupRequest({
-        code,
         currency,
-        provider_name
+        provider_name: params?.provider_name
       }),
-    enabled: code !== ''
+    staleTime: Infinity
   })
 }

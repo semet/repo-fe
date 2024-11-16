@@ -1,5 +1,6 @@
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
 import {
+  data,
   Links,
   Meta,
   Outlet,
@@ -18,12 +19,14 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import { useDehydratedState } from 'use-dehydrated-state'
 import './tailwind.css'
-import 'react-toastify/dist/ReactToastify.css'
 
 import {
+  getGameGroupRequest,
   getLanguageSettingsRequest,
+  getProviderGroupRequest,
   getStyleRequest,
   getWebMetasRequest,
   getWebSettingsRequest
@@ -31,10 +34,17 @@ import {
 import { LayoutProvider, StyleProvider } from './contexts'
 import i18next from './i18next.server'
 import { promotionTokenCookie } from './libs/cookie.server'
+import { handleToken } from './libs/token'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const locale = await i18next.getLocale(request)
-
+  const { currency } = await handleToken(request)
+  const gameGroups = getGameGroupRequest({
+    currency
+  })
+  const providerGroups = getProviderGroupRequest({
+    currency
+  })
   const languageSettings = getLanguageSettingsRequest({
     lang: locale
   })
@@ -44,13 +54,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const webMeta = await getWebMetasRequest()
 
   const showPromotion = webSettings.data.show_promotion.value
-  return Response.json(
+  return data(
     {
       locale,
       styles: styles.data,
       webMeta: webMeta.data,
       webSettings: webSettings.data,
       languageSettings,
+      gameGroups,
+      providerGroups,
       ENV: {
         API_URL: process.env.API_URL ?? '',
         API_KEY: process.env.API_KEY ?? ''
@@ -165,7 +177,7 @@ export default function App() {
 export function ErrorBoundary() {
   const error = useRouteError()
   // eslint-disable-next-line no-console
-  console.error(error)
+  console.error('LOL::::::::::', error)
   return (
     <html lang="en">
       <head>

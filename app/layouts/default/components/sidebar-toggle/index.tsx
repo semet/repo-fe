@@ -5,25 +5,18 @@ import {
   MenuItems,
   Transition
 } from '@headlessui/react'
-import {
-  Await,
-  Link,
-  useFetcher,
-  useNavigate,
-  useRouteLoaderData
-} from '@remix-run/react'
+import { Await, Link, useFetcher, useNavigate } from '@remix-run/react'
 import { Suspense, useEffect, useMemo } from 'react'
 import { MdClose, MdMenu } from 'react-icons/md'
 import { toast } from 'react-toastify'
 
 import { StarOutlineIcon } from '@/components/icons'
-import { useUser } from '@/contexts'
+import { useLayout, useUser } from '@/contexts'
 import {
   getAuthenticatedOtherItems,
   getGameIcons,
   getOtherItems
 } from '@/layouts/default'
-import { TRootLayoutLoader } from '@/types'
 
 type LogoutFetcher = {
   success: boolean
@@ -33,28 +26,25 @@ type LogoutFetcher = {
 }
 
 export const SidebarToggle = () => {
-  const loaderData = useRouteLoaderData<TRootLayoutLoader>(
-    'routes/_main+/_layout'
-  )
+  const { gameGroups } = useLayout()
 
   const fetcher = useFetcher<LogoutFetcher>()
   const navigate = useNavigate()
-  const { player } = useUser()
+  const { player, setPlayer } = useUser()
   const categoryIcons = useMemo(() => getGameIcons({ size: 24 }), [])
-
   const otherItems = getOtherItems()
   const authenticatedOtherItems = getAuthenticatedOtherItems()
-
   useEffect(() => {
-    if (fetcher.state === 'idle' && fetcher.data?.success) {
-      fetcher.load('/')
-      navigate('/', { replace: true })
+    if (fetcher.data?.success) {
+      setPlayer(undefined)
+      navigate('.', { replace: true })
     }
 
     if (fetcher.state === 'idle' && !fetcher.data?.success) {
       toast.error(fetcher.data?.message)
     }
-  }, [fetcher, navigate])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetcher])
   return (
     <Menu
       as="div"
@@ -101,10 +91,10 @@ export const SidebarToggle = () => {
                   </MenuItem>
                 )}
                 <Suspense fallback={null}>
-                  <Await resolve={loaderData?.gameGroup}>
-                    {(gameGroupData) => (
+                  <Await resolve={gameGroups}>
+                    {({ data: gameGroupData }) => (
                       <>
-                        {gameGroupData?.data.map((menu) => (
+                        {gameGroupData?.map((menu) => (
                           <MenuItem key={menu.id}>
                             <Link
                               className="flex items-center gap-3 px-6 py-4 text-sm font-medium hover:bg-white hover:text-black"
@@ -180,7 +170,9 @@ export const SidebarToggle = () => {
                   <button
                     type="submit"
                     className="w-full place-self-center rounded-full bg-red-600 py-2"
-                    onClick={close}
+                    onClick={() => {
+                      close()
+                    }}
                   >
                     Logout
                   </button>
