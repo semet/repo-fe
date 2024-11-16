@@ -1,9 +1,4 @@
-import {
-  data,
-  HeadersFunction,
-  LoaderFunctionArgs,
-  redirect
-} from '@remix-run/node'
+import { data, LoaderFunctionArgs, redirect } from '@remix-run/node'
 import { Await, useLoaderData } from '@remix-run/react'
 import { Suspense } from 'react'
 
@@ -11,21 +6,18 @@ import {
   getBankByCurrencyRequest,
   getCompanyBankAccounts
 } from '@/apis/deposit'
+import { getPromotion } from '@/apis/home'
 import { PageContainer } from '@/components/ui'
 import { DepositProvider, useUser } from '@/contexts'
 import { DepositContent, DepositSidebar } from '@/features/deposit'
+import i18next from '@/i18next.server'
 import { handleToken } from '@/libs/token'
 import { catchLoaderError } from '@/utils'
 
-//NOTE:: we can cache this _layout page to make subsequent navigation between deposit pages faster
-export const headers: HeadersFunction = () => {
-  return {
-    'Cache-Control': 'max-age=3600, s-maxage=3600, stale-while-revalidate'
-  }
-}
-
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { isTokenExpires, accessToken, currency } = await handleToken(request)
+  const locale = await i18next.getLocale(request)
+  const { isTokenExpires, accessToken, currency, showPromotion } =
+    await handleToken(request)
   const isAuthenticated = accessToken && !isTokenExpires
   if (!isAuthenticated) {
     throw redirect('/')
@@ -38,6 +30,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     }),
     getCompanyBankAccounts({
       accessToken
+    }),
+    getPromotion({
+      bonus: true,
+      currency: currency?.code ?? 'idr',
+      language: locale,
+      showCental: showPromotion
     })
   ])
   try {
@@ -48,6 +46,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return catchLoaderError(error)
   }
 }
+
+export const shouldRevalidate = () => false
 
 const DepositLayout = () => {
   const { loaderData } = useLoaderData<typeof loader>()
@@ -64,7 +64,8 @@ const DepositLayout = () => {
             <DepositProvider
               values={{
                 banks: data[0].data,
-                companyBanks: data[1].data
+                companyBanks: data[1].data,
+                promotions: data[2].data
               }}
             >
               <main className="flex gap-11">

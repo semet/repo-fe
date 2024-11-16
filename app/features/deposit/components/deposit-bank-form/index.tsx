@@ -7,6 +7,7 @@ import { Input, Select, Textarea } from '@/components/ui'
 import { useDeposit, useUser } from '@/contexts'
 import {
   AmountSelector,
+  PromotionPopup,
   TransferAmount,
   TransferNotice
 } from '@/features/deposit'
@@ -15,13 +16,15 @@ import { currencyFormatter } from '@/utils'
 
 export const DepositBankForm = () => {
   const { groupedBanks, groupedCompanyBanks } = useDeposit()
+  const { selectedPromotion } = useDeposit()
   const { player } = useUser()
   const fetcher = useFetcher()
 
   const formMethods = useRemixForm<TCreateDeposit>({
     mode: 'onSubmit',
     defaultValues: {
-      transaction_category_id: 2
+      transaction_category_id: 2,
+      bonus_id: selectedPromotion.id ?? undefined
     },
     resolver: zodResolver(createDepositSchema),
     stringifyAllValues: false,
@@ -79,19 +82,19 @@ export const DepositBankForm = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-2 gap-6">
-        <div className="flex items-end justify-between">
-          <div className="flex flex-col gap-1">
+        <div className="flex items-end justify-between gap-2">
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
             <span className="text-white">
               Promosi <em className="text-red-600">*</em>
             </span>
-            <div className="rounded-md bg-gray-400 px-2">
-              <span className="text-white">Bonus Deposit 100%</span>
+            <div className="h-[40px] content-center rounded-md bg-gray-400 px-4">
+              <p className="overflow-hidden text-ellipsis whitespace-nowrap text-white">
+                {selectedPromotion.title}
+              </p>
             </div>
           </div>
-          <div>
-            <button className="rounded-full bg-sky-400 px-4 py-1 text-white">
-              Ubah Promosi
-            </button>
+          <div className="flex-shrink-0">
+            <PromotionPopup />
           </div>
         </div>
       </div>

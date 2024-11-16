@@ -12,7 +12,7 @@ type LayoutContextType = {
   webSettings: TWebSetting
   webMeta: TWebMeta
   languageSettings: Promise<TLanguageSettings>
-  language?: string
+  locale?: string
   gameGroups: Promise<TGameGroupResponse>
   providerGroups: Promise<TProviderGroupResponse>
 }
@@ -23,7 +23,7 @@ type ProviderProps = {
     webSettings: TWebSetting
     webMeta: TWebMeta
     languageSettings: Promise<TLanguageSettings>
-    language?: string
+    locale?: string
     gameGroups: Promise<TGameGroupResponse>
     providerGroups: Promise<TProviderGroupResponse>
   }

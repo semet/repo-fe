@@ -1,5 +1,14 @@
 import { useSearchParams } from '@remix-run/react'
-import { createContext, ReactNode, useContext, useEffect, useMemo } from 'react'
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 
 import {
   DpBankIcon,
@@ -15,6 +24,7 @@ import {
   TCompanyBank,
   TDepositPath
 } from '@/schemas/deposit'
+import { TPromotion } from '@/schemas/home'
 
 import { useLayout } from './layout-context'
 
@@ -25,12 +35,20 @@ type SidebarItem = {
   icon: ReactNode
 }
 
+type DefaultPromotion = {
+  id: null
+  title: string
+}
+
 type DepositContextType = {
   banks: TBanksByCurrency[]
   companyBanks: TCompanyBank[]
   groupedBanks: Record<TBanksByCurrency['category'], TBanksByCurrency[]>
   groupedCompanyBanks: Record<TCompanyBank['bank']['category'], TCompanyBank[]>
   sidebarItems: SidebarItem[]
+  promotions: TPromotion[]
+  selectedPromotion: TPromotion | DefaultPromotion
+  setSelectedPromotion: Dispatch<SetStateAction<TPromotion | DefaultPromotion>>
 }
 
 type ProviderProps = {
@@ -38,12 +56,19 @@ type ProviderProps = {
   values: {
     banks: TBanksByCurrency[]
     companyBanks: TCompanyBank[]
+    promotions: TPromotion[]
   }
 }
 
 const DepositContext = createContext<DepositContextType | null>(null)
 
 const DepositProvider = ({ children, values }: ProviderProps) => {
+  const [selectedPromotion, setSelectedPromotion] = useState<
+    TPromotion | DefaultPromotion
+  >({
+    id: null,
+    title: 'Deposit tanpa promosi'
+  })
   const { banks, companyBanks } = values
   const { webSettings } = useLayout()
   const groupedBanks = useMemo(() => {
@@ -182,7 +207,9 @@ const DepositProvider = ({ children, values }: ProviderProps) => {
     ...values,
     groupedBanks,
     groupedCompanyBanks,
-    sidebarItems: sortedSidebarItems
+    sidebarItems: sortedSidebarItems,
+    selectedPromotion,
+    setSelectedPromotion
   }
 
   return (
