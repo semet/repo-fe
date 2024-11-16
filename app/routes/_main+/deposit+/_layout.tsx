@@ -9,7 +9,11 @@ import {
 import { getPromotion } from '@/apis/home'
 import { PageContainer } from '@/components/ui'
 import { DepositProvider, useUser } from '@/contexts'
-import { DepositContent, DepositSidebar } from '@/features/deposit'
+import {
+  DepositContent,
+  DepositSidebar,
+  DepositSkeleton
+} from '@/features/deposit'
 import i18next from '@/i18next.server'
 import { handleToken } from '@/libs/token'
 import { catchLoaderError } from '@/utils'
@@ -71,14 +75,18 @@ const DepositLayout = () => {
               <main className="flex gap-11">
                 <DepositSidebar />
                 <div className="flex-1 bg-primary p-6">
-                  {isDepositPending ? (
-                    <div>
-                      <h1 className="text-4xl text-white">
-                        There is a pending deposit
-                      </h1>
-                    </div>
+                  {sseData ? (
+                    isDepositPending ? (
+                      <div>
+                        <h1 className="text-4xl text-white">
+                          There is a pending deposit
+                        </h1>
+                      </div>
+                    ) : (
+                      <DepositContent />
+                    )
                   ) : (
-                    <DepositContent />
+                    <DepositSkeleton />
                   )}
                 </div>
               </main>
