@@ -8,6 +8,8 @@ const HttpInstance = (token?: string) => {
     baseURL
   })
   instance.interceptors.request.use((config) => {
+    // eslint-disable-next-line no-console
+    console.info(`🚀requesting ${config.url}`)
     if (apiKey) {
       config.headers['x-data-reference'] = apiKey
     }

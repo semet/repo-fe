@@ -8,7 +8,7 @@ import {
 } from '@/apis/deposit'
 import { getPromotion } from '@/apis/home'
 import { PageContainer } from '@/components/ui'
-import { DepositProvider, useUser } from '@/contexts'
+import { DepositProvider, useEventSource } from '@/contexts'
 import {
   DepositContent,
   DepositSidebar,
@@ -55,7 +55,7 @@ export const shouldRevalidate = () => false
 
 const DepositLayout = () => {
   const { loaderData } = useLoaderData<typeof loader>()
-  const { sseData } = useUser()
+  const { sseData } = useEventSource()
 
   const isDepositPending = sseData?.data?.deposit?.some((deposit) =>
     [1, 4].includes(deposit.status)

@@ -26,19 +26,20 @@ import './tailwind.css'
 import {
   getGameGroupRequest,
   getLanguageSettingsRequest,
+  getPlayerRequest,
   getProviderGroupRequest,
   getStyleRequest,
   getWebMetasRequest,
   getWebSettingsRequest
 } from './apis/common'
-import { LayoutProvider, StyleProvider } from './contexts'
+import { LayoutProvider, StyleProvider, UserProvider } from './contexts'
 import i18next from './i18next.server'
 import { promotionTokenCookie } from './libs/cookie.server'
 import { handleToken } from './libs/token'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const locale = await i18next.getLocale(request)
-  const { currency } = await handleToken(request)
+  const { currency, accessToken, refreshToken } = await handleToken(request)
   const gameGroups = getGameGroupRequest({
     currency
   })
@@ -53,16 +54,24 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const webSettings = await getWebSettingsRequest()
   const webMeta = await getWebMetasRequest()
 
+  const playerData = accessToken
+    ? await getPlayerRequest({ accessToken })
+    : undefined
+
   const showPromotion = webSettings.data.show_promotion.value
   return data(
     {
       locale,
+      currency,
+      accessToken,
+      refreshToken,
       styles: styles.data,
       webMeta: webMeta.data,
+      player: playerData?.data,
       webSettings: webSettings.data,
-      languageSettings,
       gameGroups,
       providerGroups,
+      languageSettings,
       ENV: {
         API_URL: process.env.API_URL ?? '',
         API_KEY: process.env.API_KEY ?? ''
@@ -144,7 +153,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const { styles, ...rest } = useLoaderData<typeof loader>()
+  const loaderData = useLoaderData<typeof loader>()
+
+  const layoutData = {
+    locale: loaderData.locale,
+    styles: loaderData.styles,
+    webMeta: loaderData.webMeta,
+    currency: loaderData.currency,
+    gameGroups: loaderData.gameGroups,
+    webSettings: loaderData.webSettings,
+    providerGroups: loaderData.providerGroups,
+    languageSettings: loaderData.languageSettings
+  }
+
+  const userData = {
+    player: loaderData.player,
+    accessToken: loaderData.accessToken,
+    refreshToken: loaderData.refreshToken
+  }
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -162,10 +188,12 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <HydrationBoundary state={dehydratedState}>
-        <StyleProvider styles={styles}>
-          <LayoutProvider data={rest}>
-            <Outlet />
-          </LayoutProvider>
+        <StyleProvider values={loaderData.styles}>
+          <UserProvider values={userData}>
+            <LayoutProvider values={layoutData}>
+              <Outlet />
+            </LayoutProvider>
+          </UserProvider>
         </StyleProvider>
       </HydrationBoundary>
       <ToastContainer />

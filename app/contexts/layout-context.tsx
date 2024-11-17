@@ -9,21 +9,23 @@ import {
 } from '@/schemas/general'
 
 type LayoutContextType = {
+  locale?: string
+  currency?: string
   webSettings: TWebSetting
   webMeta: TWebMeta
   languageSettings: Promise<TLanguageSettings>
-  locale?: string
   gameGroups: Promise<TGameGroupResponse>
   providerGroups: Promise<TProviderGroupResponse>
 }
 
 type ProviderProps = {
   children: ReactNode
-  data: {
+  values: {
+    locale: string
+    currency: string
     webSettings: TWebSetting
     webMeta: TWebMeta
     languageSettings: Promise<TLanguageSettings>
-    locale?: string
     gameGroups: Promise<TGameGroupResponse>
     providerGroups: Promise<TProviderGroupResponse>
   }
@@ -31,7 +33,7 @@ type ProviderProps = {
 
 const LayoutContext = createContext<LayoutContextType | null>(null)
 
-const LayoutProvider: FC<ProviderProps> = ({ children, data }) => {
+const LayoutProvider: FC<ProviderProps> = ({ children, values: data }) => {
   return (
     <LayoutContext.Provider value={data}>{children}</LayoutContext.Provider>
   )

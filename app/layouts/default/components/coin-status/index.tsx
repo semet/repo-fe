@@ -1,9 +1,9 @@
 import { TfiReload } from 'react-icons/tfi'
 
-import { useUser } from '@/contexts'
+import { useEventSource } from '@/contexts'
 
 export const CoinStatus = () => {
-  const { sseData, refreshSse } = useUser()
+  const { sseData, refreshSse } = useEventSource()
   return (
     <div className="flex items-center rounded bg-white px-2 py-1">
       <img

@@ -6,7 +6,7 @@ import {
   Transition
 } from '@headlessui/react'
 import { Await, Link, useFetcher, useNavigate } from '@remix-run/react'
-import { Suspense, useEffect, useMemo } from 'react'
+import { startTransition, Suspense, useEffect, useMemo } from 'react'
 import { MdClose, MdMenu } from 'react-icons/md'
 import { toast } from 'react-toastify'
 
@@ -36,8 +36,10 @@ export const SidebarToggle = () => {
   const authenticatedOtherItems = getAuthenticatedOtherItems()
   useEffect(() => {
     if (fetcher.data?.success) {
-      setPlayer(undefined)
-      navigate('.', { replace: true })
+      startTransition(() => {
+        setPlayer(undefined)
+        navigate('.', { replace: true })
+      })
     }
 
     if (fetcher.state === 'idle' && !fetcher.data?.success) {

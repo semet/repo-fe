@@ -1,4 +1,3 @@
-import { useRevalidator } from '@remix-run/react'
 import {
   createContext,
   Dispatch,
@@ -6,73 +5,54 @@ import {
   ReactNode,
   SetStateAction,
   useContext,
-  useEffect,
   useState
 } from 'react'
-import { useEventSource } from 'remix-utils/sse/react'
 
-import { TSseData } from '@/schemas/deposit'
 import { TPlayer } from '@/schemas/general'
 
-type LayoutContextType = {
+type UserContextType = {
   player?: TPlayer
   setPlayer: Dispatch<SetStateAction<TPlayer | undefined>>
   accessToken?: string
   setAccessToken: Dispatch<SetStateAction<string | undefined>>
-  token2?: string
-  setToken2: Dispatch<SetStateAction<string | undefined>>
-  sseData: TSseData | null
-  refreshSse: () => void
+  refreshToken?: string
+  setRefreshToken: Dispatch<SetStateAction<string | undefined>>
   reset: () => void
 }
 
 type ProviderProps = {
   children: ReactNode
-  value: {
+  values: {
     player?: TPlayer
     accessToken?: string
-    token2?: string
+    refreshToken?: string
   }
 }
 
-const UserContext = createContext<LayoutContextType | null>(null)
+const UserContext = createContext<UserContextType | null>(null)
 
-const UserProvider: FC<ProviderProps> = ({ children, value }) => {
+const UserProvider: FC<ProviderProps> = ({ children, values: value }) => {
   const [player, setPlayer] = useState<TPlayer | undefined>(value.player)
   const [accessToken, setAccessToken] = useState<string | undefined>(
     value.accessToken
   )
-  const [token2, setToken2] = useState<string | undefined>(value.token2)
-  // const [searchParams] = useSearchParams()
-  // const tab = searchParams.get('tab')
-  const { revalidate } = useRevalidator()
-  const data = useEventSource('/stream/deposit', {
-    event: 'deposit-event',
-    enabled: true
-  })
-  const sseData =
-    data !== null && typeof data === 'string'
-      ? (JSON.parse(data) as TSseData)
-      : null
-  useEffect(() => {
-    revalidate()
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- "we know better" — Moishi
-  }, [])
+  const [refreshToken, setRefreshToken] = useState<string | undefined>(
+    value.refreshToken
+  )
+
   const reset = () => {
     setPlayer(undefined)
     setAccessToken(undefined)
-    setToken2(undefined)
+    setRefreshToken(undefined)
   }
   const providerValues = {
     player,
     setPlayer,
     accessToken,
     setAccessToken,
-    token2,
-    setToken2,
-    reset,
-    sseData,
-    refreshSse: revalidate
+    refreshToken,
+    setRefreshToken,
+    reset
   }
 
   return (

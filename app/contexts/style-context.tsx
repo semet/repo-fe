@@ -8,14 +8,16 @@ type LayoutContextType = {
 
 type ProviderProps = {
   children: ReactNode
-  styles: TStyle
+  values: TStyle
 }
 
 const StyleContext = createContext<LayoutContextType | null>(null)
 
-const StyleProvider: FC<ProviderProps> = ({ children, styles }) => {
+const StyleProvider: FC<ProviderProps> = ({ children, values }) => {
   return (
-    <StyleContext.Provider value={{ styles }}>{children}</StyleContext.Provider>
+    <StyleContext.Provider value={{ styles: values }}>
+      {children}
+    </StyleContext.Provider>
   )
 }
 
