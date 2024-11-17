@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link, useFetcher, useNavigate } from '@remix-run/react'
+import { Link, useFetcher, useRevalidator } from '@remix-run/react'
 import { FC, useEffect, useState } from 'react'
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 import { CgSpinner } from 'react-icons/cg'
@@ -58,13 +58,13 @@ export const LoginForm: FC<Props> = ({ onCLose }) => {
   })
 
   const { reset } = formMethods
-  const navigate = useNavigate()
+  const revalidator = useRevalidator()
   const { setPlayer } = useUser()
   useEffect(() => {
     if (fetcher.data?.success) {
       // fetcher.load('/')
       setPlayer(fetcher.data?.player)
-      navigate('.', { replace: true })
+      revalidator.revalidate()
       onCLose()
     }
 
