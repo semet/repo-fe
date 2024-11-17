@@ -31,9 +31,8 @@ const EventSourceContext = createContext<EventSourceContextType | null>(null)
 
 const EventSourceProvider: FC<ProviderProps> = ({ children, value }) => {
   const [token2, setToken2] = useState<string | undefined>(value.token2)
-  // const [searchParams] = useSearchParams()
-  // const tab = searchParams.get('tab')
   const { revalidate } = useRevalidator()
+
   const data = useRemixEventSource('/stream/deposit', {
     event: 'deposit-event',
     enabled: true
@@ -42,11 +41,13 @@ const EventSourceProvider: FC<ProviderProps> = ({ children, value }) => {
     data !== null && typeof data === 'string'
       ? (JSON.parse(data) as TSseData)
       : null
+
+  //NOTE:: this is to force SSE to reconnect upon page refresh
+  //it will only run once upon page load and then it will maintain the connection
   useEffect(() => {
     revalidate()
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- "we know better" — Moishi
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
   const providerValues = {
     token2,
     setToken2,

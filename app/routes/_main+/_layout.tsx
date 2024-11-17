@@ -1,6 +1,5 @@
 import { data, LoaderFunctionArgs } from '@remix-run/node'
-import { Outlet, useLoaderData, useRevalidator } from '@remix-run/react'
-import { startTransition, useEffect } from 'react'
+import { Outlet, useLoaderData } from '@remix-run/react'
 
 import { EventSourceProvider, useStyle } from '@/contexts'
 import {
@@ -28,7 +27,7 @@ import { catchLoaderError, extractStyle } from '@/utils'
 // }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { accessToken, token2 } = await handleToken(request)
+  const { token2 } = await handleToken(request)
 
   try {
     if (token2) {
@@ -36,7 +35,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     }
 
     return data({
-      accessToken,
       token2
     })
   } catch (error) {
@@ -54,14 +52,7 @@ const MainLayout = () => {
   const { token2 } = loaderData
   const { styles } = useStyle()
   const style = extractStyle(styles).get('desktop_homepage_body')
-  // console.log('playerInLayout', player)
-  const { revalidate } = useRevalidator()
-  useEffect(() => {
-    startTransition(() => {
-      revalidate()
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token2])
+
   return (
     <EventSourceProvider
       value={{
