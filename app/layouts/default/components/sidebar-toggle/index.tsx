@@ -10,7 +10,7 @@ import { startTransition, Suspense, useEffect, useMemo } from 'react'
 import { MdClose, MdMenu } from 'react-icons/md'
 import { toast } from 'react-toastify'
 
-import { StarOutlineIcon } from '@/components/icons'
+import { GameAll, StarOutlineIcon } from '@/components/icons'
 import { useLayout, useUser } from '@/contexts'
 import {
   getAuthenticatedOtherItems,
@@ -92,6 +92,19 @@ export const SidebarToggle = () => {
                     </Link>
                   </MenuItem>
                 )}
+                <MenuItem>
+                  <Link
+                    className="flex items-center gap-3 px-6 py-4 text-sm font-medium hover:bg-white hover:text-black"
+                    to="/"
+                    onClick={close}
+                  >
+                    <GameAll
+                      width={24}
+                      height={24}
+                    />
+                    <span>All Game</span>
+                  </Link>
+                </MenuItem>
                 <Suspense fallback={null}>
                   <Await resolve={gameGroups}>
                     {({ data: gameGroupData }) => (
