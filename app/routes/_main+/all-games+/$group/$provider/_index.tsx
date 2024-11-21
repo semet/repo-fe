@@ -71,7 +71,7 @@ const AllGamesPage = () => {
 
   return (
     <>
-      <div className="grid grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         {gameData?.pages?.map((page) =>
           page?.data?.map((game) => (
             <GameCard

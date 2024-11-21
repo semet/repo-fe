@@ -5,12 +5,6 @@ import { Suspense } from 'react'
 import { getProviderRequest } from '@/apis/all-game'
 import { GameProviders } from '@/features/all-game'
 
-export const headers = () => {
-  return {
-    'Cache-Control': 'public, max-age=3600'
-  }
-}
-
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url)
   const groupCode = url.pathname.split('/')[2]

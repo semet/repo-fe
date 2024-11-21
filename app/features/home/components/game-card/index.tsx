@@ -11,7 +11,7 @@ export const GameCard = <T extends TFavoriteGames>(props: TProps<T>) => {
   return (
     <div
       className={twMerge(
-        'flex w-full flex-col gap-2 self-center overflow-hidden rounded-md sm:w-auto',
+        'flex w-full min-w-48 flex-col gap-2 self-center overflow-hidden rounded-md sm:w-auto',
         className
       )}
     >

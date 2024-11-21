@@ -45,9 +45,9 @@ const EventSourceProvider: FC<ProviderProps> = ({ children, value }) => {
   //NOTE:: this is to force SSE to reconnect upon page refresh
   //it will only run once upon page load and then it will maintain the connection
   useEffect(() => {
+    if (!token2) return
     revalidate()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [revalidate, token2])
   const providerValues = {
     token2,
     setToken2,
