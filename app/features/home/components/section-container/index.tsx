@@ -6,12 +6,16 @@ type TProps = {
   title: string
   contentClassName?: string
   containerClassName?: string
+  headerClassName?: string
 }
 
 type RefType = HTMLDivElement
 
 export const SectionContainer = forwardRef<RefType, TProps>(
-  ({ children, contentClassName, containerClassName, title }, ref) => {
+  (
+    { children, contentClassName, containerClassName, headerClassName, title },
+    ref
+  ) => {
     return (
       <div
         ref={ref}
@@ -20,7 +24,12 @@ export const SectionContainer = forwardRef<RefType, TProps>(
           containerClassName
         ])}
       >
-        <h2 className="text-center text-lg font-semibold uppercase text-white">
+        <h2
+          className={twMerge([
+            'text-center text-lg font-semibold uppercase text-white',
+            headerClassName
+          ])}
+        >
           {title}
         </h2>
         <div

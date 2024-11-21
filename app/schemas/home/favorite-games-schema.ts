@@ -8,7 +8,7 @@ export const favoriteGameSchema = z.object({
       code: z.string(),
       category_id: z.string(),
       category: z.string(),
-      image_name: z.string(),
+      image_name: z.string().or(z.null()),
       status: z.number(),
       sequence: z.number().or(z.null()),
       rtp: z.number(),

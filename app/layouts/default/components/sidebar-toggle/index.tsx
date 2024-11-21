@@ -95,7 +95,7 @@ export const SidebarToggle = () => {
                 <MenuItem>
                   <Link
                     className="flex items-center gap-3 px-6 py-4 text-sm font-medium hover:bg-white hover:text-black"
-                    to="/"
+                    to="/all-games/all-group/all-providers"
                     onClick={close}
                   >
                     <GameAll

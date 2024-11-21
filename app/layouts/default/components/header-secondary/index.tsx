@@ -1,9 +1,10 @@
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
-import { Await } from '@remix-run/react'
+import { Await, useLocation } from '@remix-run/react'
 import { startTransition, Suspense, useMemo, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 import { PromotionIcon, ReferralIcon } from '@/components/icons'
+import { pageWithoutMenu } from '@/configs/paths'
 import { useLayout, useStyle } from '@/contexts'
 import {
   getGameIcons,
@@ -17,6 +18,9 @@ import { PlayNowSkeleton } from './skeleton'
 export const HeaderSecondary = () => {
   const [gameGroupCode, setGameGroupCode] = useState<string>('')
   const { gameGroups, providerGroups } = useLayout()
+  const { pathname } = useLocation()
+  const firstPath = pathname.split('/')[1]
+  const shouldShowHeader = !pageWithoutMenu.includes(firstPath)
 
   const { styles: styleData } = useStyle()
   const categoryIcons = useMemo(() => getGameIcons({}), [])
@@ -24,7 +28,7 @@ export const HeaderSecondary = () => {
   const styles = extractStyle(styleData).get(
     'desktop_homepage_gameCategoryContent'
   )
-  return (
+  return shouldShowHeader ? (
     <nav
       className="flex justify-start overflow-x-auto bg-center scrollbar-thin scrollbar-thumb-black/80 md:justify-center"
       style={{
@@ -137,5 +141,5 @@ export const HeaderSecondary = () => {
         </PopoverButton>
       </Popover>
     </nav>
-  )
+  ) : null
 }

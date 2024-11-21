@@ -29,5 +29,5 @@ export const lastPlayedSchema = z.object({
   )
 })
 
-export type TLastPlayed = z.infer<typeof lastPlayedSchema>
-export type TLastPlayedData = TLastPlayed['data'][0]
+export type TLastPlayedResponse = z.infer<typeof lastPlayedSchema>
+export type TLastPlayed = TLastPlayedResponse['data'][0]

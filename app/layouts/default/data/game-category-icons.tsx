@@ -4,11 +4,11 @@ import { twMerge } from 'tailwind-merge'
 import {
   AccountIcon,
   CoinPromotionIcon,
+  GameAll,
   GameCasino,
   GameCockFight,
   GameEsport,
   GameFishShoot,
-  GameGeneral,
   GameLottery,
   GameSlot,
   GameSport,
@@ -28,7 +28,7 @@ export const getGameIcons = (params: Params) => {
   const categoryIcons: ObjectIndex<string, Record<string, ReactNode>> = {
     default: {
       icon: (
-        <GameGeneral
+        <GameAll
           width={size}
           height={size}
           className={twMerge(center && 'mx-auto')}

@@ -1,18 +1,23 @@
-import { FC } from 'react'
+import { twMerge } from 'tailwind-merge'
 
-import { TFavoriteGamesData } from '@/schemas/home'
+import { TFavoriteGames } from '@/schemas/home'
 
-type TProps = {
-  game: TFavoriteGamesData
-}
+type TProps<T> = {
+  game: T
+} & React.HTMLAttributes<HTMLDivElement>
 
-export const GameCard: FC<TProps> = (props) => {
-  const { game } = props
+export const GameCard = <T extends TFavoriteGames>(props: TProps<T>) => {
+  const { game, className } = props
   return (
-    <div className="flex w-full flex-col gap-2 self-center overflow-hidden rounded-md sm:w-auto">
+    <div
+      className={twMerge(
+        'flex w-full flex-col gap-2 self-center overflow-hidden rounded-md sm:w-auto',
+        className
+      )}
+    >
       <div className="h-32 w-full">
         <img
-          src={game.image_name}
+          src={game.image_name ?? ''}
           alt={game.name}
           className="h-full w-full object-cover"
         />
