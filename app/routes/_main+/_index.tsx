@@ -67,7 +67,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 const Home = () => {
   const { bannersData, banks, providers, promotions, favoriteGames } =
     useLoaderData<typeof loader>()
-  const { accessToken } = useUser()
+  const { player } = useUser()
   return (
     <div className="flex flex-col gap-10">
       <Suspense fallback={<BannerCarouselSkeleton />}>
@@ -81,7 +81,7 @@ const Home = () => {
 
       <ProgressiveJackpotSection />
 
-      {accessToken && favoriteGames !== undefined && (
+      {player && favoriteGames !== undefined && (
         <Suspense fallback={<FavoriteGameSkeleton />}>
           <Await resolve={favoriteGames}>
             {(favoriteGames) => (

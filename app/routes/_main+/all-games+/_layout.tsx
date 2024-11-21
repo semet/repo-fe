@@ -23,11 +23,11 @@ export const shouldRevalidate = () => false
 
 const AllGameLayout = () => {
   const { lastPlayed } = useLoaderData<typeof loader>()
-  const { accessToken } = useUser()
+  const { player } = useUser()
   const { gameGroups } = useLayout()
   return (
     <PageContainer>
-      {accessToken && (
+      {player && (
         <Suspense fallback={<>Loading ....</>}>
           <Await resolve={lastPlayed}>
             {(lastPlayed) => <LastPlayed games={lastPlayed?.data} />}
