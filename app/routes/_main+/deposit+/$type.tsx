@@ -15,8 +15,6 @@ export const loader = async (_: LoaderFunctionArgs) => {
   }
 }
 
-export const shouldRevalidate = () => true
-
 const DepositPage = () => {
   const { type } = useParams<{ type: TDepositPath }>()
 

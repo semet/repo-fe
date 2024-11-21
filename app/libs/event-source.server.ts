@@ -6,11 +6,7 @@ import { emitter } from './emitter.server'
 export function createEventSource({ token2 }: { token2: string }) {
   const eventSource = new EventSourcePolyfill('https://be.i88.dev/sse/pl', {
     headers: {
-      Authorization: `Bearer ${token2}`,
-      'Cache-Control': 'no-cache',
-      'X-Accel-Buffering': 'no',
-      'Content-Type': 'text/event-stream',
-      Connection: 'keep-alive'
+      Authorization: `Bearer ${token2}`
     },
     // one hour timeout
     heartbeatTimeout: 3600000
