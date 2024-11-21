@@ -10,7 +10,9 @@ import { handleToken } from '@/libs/token'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { accessToken } = await handleToken(request)
-  const lastPlayed = getLastPlayedGames({ accessToken })
+  const lastPlayed = accessToken
+    ? getLastPlayedGames({ accessToken })
+    : undefined
 
   return data({
     lastPlayed
@@ -28,9 +30,7 @@ const AllGameLayout = () => {
       {accessToken && (
         <Suspense fallback={<>Loading ....</>}>
           <Await resolve={lastPlayed}>
-            {({ data: lastPlayedGames }) => (
-              <LastPlayed games={lastPlayedGames} />
-            )}
+            {(lastPlayed) => <LastPlayed games={lastPlayed?.data} />}
           </Await>
         </Suspense>
       )}

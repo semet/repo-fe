@@ -4,7 +4,7 @@ import { GameCard } from '@/features/home'
 import { TLastPlayed } from '@/schemas/home'
 
 type Props = {
-  games: TLastPlayed[]
+  games?: TLastPlayed[]
 }
 
 export const LastPlayed: FC<Props> = ({ games }) => {
@@ -14,7 +14,7 @@ export const LastPlayed: FC<Props> = ({ games }) => {
         Last Played
       </h1>
       <div className="flex items-start gap-6">
-        {games.map((game) => (
+        {games?.map((game) => (
           <GameCard<TLastPlayed>
             key={game.id}
             game={game}
