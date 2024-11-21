@@ -18,7 +18,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   await queryClient.prefetchInfiniteQuery({
     queryKey: generalKeys.game({
-      limit: 60,
+      limit: 18,
       status: 1,
       sort: 'name:asc',
       ...(gameGroupCode !== 'all-group' && { game_group_code: gameGroupCode }),
@@ -56,7 +56,7 @@ const AllGamesPage = () => {
     isFetchingNextPage
   } = useGameQuery({
     status: 1,
-    limit: 60,
+    limit: 18,
     sort: 'name:asc',
     ...(gameGroupCode !== 'all-group' && { game_group_code: gameGroupCode }),
     ...(providerCode !== 'all-provider' && { provider_code: providerCode })
