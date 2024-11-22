@@ -21,6 +21,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       limit: 18,
       status: 1,
       sort: 'name:asc',
+      orderBySequence: true,
       ...(gameGroupCode !== 'all-group' && { game_group_code: gameGroupCode }),
       ...(providerCode !== 'all-provider' && { provider_code: providerCode })
     }),
@@ -30,6 +31,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         status: queryKey[1]?.status,
         sort: queryKey[1]?.sort,
         page: 1,
+        orderBySequence: queryKey[1]?.orderBySequence,
         game_group_code: queryKey[1]?.game_group_code,
         provider_code: queryKey[1]?.provider_code
       }),
@@ -58,6 +60,7 @@ const AllGamesPage = () => {
     status: 1,
     limit: 18,
     sort: 'name:asc',
+    orderBySequence: true,
     ...(gameGroupCode !== 'all-group' && { game_group_code: gameGroupCode }),
     ...(providerCode !== 'all-provider' && { provider_code: providerCode })
   })

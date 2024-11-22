@@ -9,4 +9,5 @@ export type TGameParams = TPaginationParams<{
   provider_code?: string
   currency?: string
   tag?: string
+  orderBySequence?: boolean
 }>

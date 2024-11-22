@@ -34,8 +34,8 @@ export const GameProviders: FC<Props> = ({ providers }) => {
     <div className="flex flex-col gap-4">
       <div
         className={twMerge([
-          'mt-4 grid grid-cols-2 gap-4 overflow-y-hidden transition-all duration-300 sm:grid-cols-4 md:grid-cols-6',
-          showAll ? 'h-[calc-size(auto)]' : 'h-24'
+          'mt-4 grid grid-cols-2 gap-4 overflow-hidden transition-all duration-300 sm:grid-cols-4 md:grid-cols-6',
+          showAll ? 'max-h-[500px]' : 'max-h-24'
         ])}
       >
         {refinedProviders.map((provider) => (
