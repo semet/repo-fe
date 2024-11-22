@@ -95,6 +95,9 @@ dependencies:
   react-toastify:
     specifier: ^10.0.6
     version: 10.0.6(react-dom@18.3.1)(react@18.3.1)
+  remix:
+    specifier: ^2.15.0
+    version: 2.15.0
   remix-hook-form:
     specifier: ^5.1.1
     version: 5.1.1(@remix-run/react@2.14.0)(react-dom@18.3.1)(react-hook-form@7.53.2)(react@18.3.1)
@@ -6257,6 +6260,11 @@ packages:
       react: 18.3.1
       type-fest: 4.26.1
       zod: 3.23.8
+    dev: false
+
+  /remix@2.15.0:
+    resolution: {integrity: sha512-AUo1clAQ1bs1HtFJwm17vL/Tow6dBxiKSfjJAdP85FFm61PQfSA992ZAHeU+bXgfg242tA0H07HLapIRaP0c8w==}
+    engines: {node: '>=18.0.0'}
     dev: false
 
   /require-like@0.1.2:
