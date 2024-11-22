@@ -34,8 +34,8 @@ export const GameProviders: FC<Props> = ({ providers }) => {
     <div className="flex flex-col gap-4">
       <div
         className={twMerge([
-          'mt-4 grid grid-cols-6 gap-4 overflow-y-hidden',
-          showAll ? 'h-auto' : 'h-24'
+          'mt-4 grid grid-cols-2 gap-4 overflow-hidden transition-all duration-300 sm:grid-cols-4 md:grid-cols-6',
+          showAll ? 'max-h-[500px]' : 'max-h-24'
         ])}
       >
         {refinedProviders.map((provider) => (
@@ -43,7 +43,7 @@ export const GameProviders: FC<Props> = ({ providers }) => {
             to={`/all-games/${selectedGroup}/${provider.code}`}
             key={provider.id}
             className={twMerge([
-              'flex h-10 items-center justify-center gap-2 rounded border border-secondary hover:bg-secondary hover:text-white',
+              'flex h-10 items-center justify-center gap-2 rounded border border-secondary hover:text-white hover:shadow-[0px_0px_20px_0px_#F2BD00]',
               selectedProvider === provider.code && 'bg-secondary text-white'
             ])}
           >

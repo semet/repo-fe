@@ -1,5 +1,6 @@
 import { Link, useLocation } from '@remix-run/react'
 import { FC, useMemo } from 'react'
+import { FaSearch } from 'react-icons/fa'
 import { FaAngleRight } from 'react-icons/fa6'
 import { twMerge } from 'tailwind-merge'
 
@@ -29,7 +30,7 @@ export const GameCategories: FC<Props> = ({ gameGroups }) => {
 
   const categoryIcons = useMemo(() => getGameIcons({ size: 24 }), [])
   return (
-    <div className="mt-4 flex flex-col gap-6">
+    <div className="relative mt-4 flex flex-col gap-2">
       <div className="flex justify-between">
         <h1 className="text-lg font-semibold text-white">All Games</h1>
         <div className="flex items-center gap-2">
@@ -39,7 +40,7 @@ export const GameCategories: FC<Props> = ({ gameGroups }) => {
           <FaAngleRight className="text-white" />
         </div>
       </div>
-      <div className="flex justify-between rounded bg-secondary">
+      <div className="overflow-x-auto rounded bg-secondary scrollbar-thin scrollbar-track-transparent scrollbar-thumb-yellow-300">
         <div className="flex">
           {refinedGameGroups?.map((menu) => (
             <div key={menu.id}>
@@ -61,6 +62,14 @@ export const GameCategories: FC<Props> = ({ gameGroups }) => {
             </div>
           ))}
         </div>
+      </div>
+      <div className="flex items-center overflow-hidden rounded-md bg-white has-[:focus]:shadow-[0px_0px_20px_0px_#F2BD00] xl:absolute xl:right-2 xl:top-[49px] xl:w-1/4">
+        <input
+          type="text"
+          placeholder="Cari permainan"
+          className="h-14 w-full border-none ring-0 focus:ring-0"
+        />
+        <FaSearch className="mr-4 text-2xl text-gray-400" />
       </div>
     </div>
   )
