@@ -1,5 +1,6 @@
 import { twMerge } from 'tailwind-merge'
 
+import { GameAll } from '@/components/icons'
 import { TFavoriteGames } from '@/schemas/home'
 
 type TProps<T> = {
@@ -16,11 +17,20 @@ export const GameCard = <T extends TFavoriteGames>(props: TProps<T>) => {
       )}
     >
       <div className="h-32 w-full">
-        <img
-          src={game.image_name ?? ''}
-          alt={game.name}
-          className="h-full w-full object-cover"
-        />
+        {game.image_name !== null ? (
+          <img
+            src={game.image_name ?? ''}
+            alt={game.name}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gray-400">
+            <GameAll
+              width={70}
+              height={70}
+            />
+          </div>
+        )}
       </div>
       <span className="mt-2 font-semibold text-white">{game.name}</span>
       <div className="bg-black-100 flex items-center gap-2">

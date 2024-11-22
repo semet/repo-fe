@@ -13,7 +13,7 @@ export const LastPlayed: FC<Props> = ({ games }) => {
       <h1 className="text-lg font-semibold uppercase text-white">
         Last Played
       </h1>
-      <div className="flex items-start gap-6 overflow-x-auto">
+      <div className="flex items-start gap-6 overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-primary">
         {games?.map((game) => (
           <GameCard<TLastPlayed>
             key={game.id}
