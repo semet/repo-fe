@@ -7,8 +7,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
-  useRouteError,
-  useRouteLoaderData
+  useRouteError
 } from '@remix-run/react'
 import {
   HydrationBoundary,
@@ -20,6 +19,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useChangeLanguage } from 'remix-i18next/react'
 import { useDehydratedState } from 'use-dehydrated-state'
 import './tailwind.css'
 
@@ -105,11 +105,12 @@ export const links: LinksFunction = () => [
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const loaderData = useRouteLoaderData<typeof loader>('root')
+  const loaderData = useLoaderData<typeof loader>()
   const { i18n } = useTranslation()
+  useChangeLanguage(loaderData.locale)
   return (
     <html
-      lang={loaderData?.locale}
+      lang={i18n.resolvedLanguage}
       dir={i18n.dir()}
       className="scrollbar-thin scrollbar-track-gray-700 scrollbar-thumb-gray-600"
     >

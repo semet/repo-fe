@@ -1,3 +1,5 @@
 {
-  "greeting": "Welcome"
+  "headerTop": {
+    "contact": "Contact Us"
+  }
 }

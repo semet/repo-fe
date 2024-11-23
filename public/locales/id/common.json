@@ -1,3 +1,5 @@
 {
-  "greeting": "Selamat Datang"
+  "headerTop": {
+    "contact": "Kontak"
+  }
 }
