@@ -1,0 +1,11 @@
+{
+  "section": {
+    "favorite": {
+      "title": "Favorite",
+      "showAll": "Show All"
+    },
+    "paymentMethod": "Payment Method",
+    "promotion": "Prize & Promotion",
+    "provider": "Provider"
+  }
+}

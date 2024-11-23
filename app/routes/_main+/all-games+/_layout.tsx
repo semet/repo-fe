@@ -21,6 +21,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export const shouldRevalidate = () => false
 
+export const handle = {
+  i18n: 'all-game'
+}
+
 const AllGameLayout = () => {
   const { lastPlayed } = useLoaderData<typeof loader>()
   const { player } = useUser()

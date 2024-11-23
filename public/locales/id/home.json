@@ -1,0 +1,11 @@
+{
+  "section": {
+    "favorite": {
+      "title": "Game Favorit",
+      "showAll": "Lihat Semua"
+    },
+    "paymentMethod": "Metode Pembayaran",
+    "promotion": "Hadiah & Promosi",
+    "provider": "Provider"
+  }
+}

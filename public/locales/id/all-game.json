@@ -1,0 +1,12 @@
+{
+  "header": {
+    "lastPlayed": "Terakhir Dimainkan",
+    "title": "Semua Permainan",
+    "favorite": "Permainan Favorit Saya",
+    "search": "Cari Permainan"
+  },
+  "provider": {
+    "showAll": "Tampilkan Semua",
+    "showLess": "Tampilkan Lebih Sedikit"
+  }
+}

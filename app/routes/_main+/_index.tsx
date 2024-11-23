@@ -24,9 +24,9 @@ import {
   ProviderSkeleton,
   ProvidersSection
 } from '@/features/home'
-import i18next from '@/i18next.server'
 import { ErrorWrapper } from '@/layouts/error'
 import { handleToken } from '@/libs/token'
+import i18next from '@/localization/i18next.server'
 
 export const meta: MetaFunction = () => {
   return [
@@ -34,6 +34,10 @@ export const meta: MetaFunction = () => {
       title: 'Home'
     }
   ]
+}
+
+export const handle = {
+  i18n: 'home'
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

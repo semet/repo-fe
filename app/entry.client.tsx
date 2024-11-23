@@ -7,7 +7,7 @@ import { hydrateRoot } from 'react-dom/client'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
 import { getInitialNamespaces } from 'remix-i18next/client'
 
-import i18n from './i18n'
+import i18n from './localization/i18n'
 
 async function hydrate() {
   await use(initReactI18next) // Tell i18next to use the react-i18next plugin
@@ -22,10 +22,12 @@ async function hydrate() {
         // Here only enable htmlTag detection, we'll detect the language only
         // server-side with remix-i18next, by using the `<html lang>` attribute
         // we can communicate to the client the language detected server-side
-        order: ['htmlTag'],
+        order: ['cookie', 'htmlTag'],
         // Because we only use htmlTag, there's no reason to cache the language
         // on the browser, so we disable it
-        caches: []
+        caches: ['cookie'],
+        lookupCookie: 'i18next',
+        cookieMinutes: 60 * 24 * 365 // 1 year
       }
     })
 

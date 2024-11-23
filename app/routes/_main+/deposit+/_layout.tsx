@@ -14,8 +14,8 @@ import {
   DepositSidebar,
   DepositSkeleton
 } from '@/features/deposit'
-import i18next from '@/i18next.server'
 import { handleToken } from '@/libs/token'
+import i18next from '@/localization/i18next.server'
 import { catchLoaderError } from '@/utils'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

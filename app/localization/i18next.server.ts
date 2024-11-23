@@ -3,12 +3,21 @@ import { resolve } from 'node:path'
 import Backend from 'i18next-fs-backend'
 import { RemixI18Next } from 'remix-i18next/server'
 
-import i18n from '@/i18n' // your i18n configuration file
+import i18n from './i18n' // your i18n configuration file
 
 const i18next = new RemixI18Next({
   detection: {
     supportedLanguages: i18n.supportedLngs,
-    fallbackLanguage: i18n.fallbackLng
+    fallbackLanguage: i18n.fallbackLng,
+    async findLocale(request) {
+      const langFromCookie = request.headers
+        .get('cookie')
+        ?.split(';')
+        .find((c) => c.includes('i18next'))
+        ?.split('=')[1]
+
+      return langFromCookie ?? i18n.fallbackLng
+    }
   },
   // This is the configuration for i18next used
   // when translating messages server-side only

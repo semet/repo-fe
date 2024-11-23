@@ -1,0 +1,12 @@
+{
+  "header": {
+    "lastPlayed": "Last Played",
+    "title": "All Game",
+    "favorite": "My Favorite Game",
+    "search": "Search Game"
+  },
+  "provider": {
+    "showAll": "Show All",
+    "showLess": "Show Less"
+  }
+}

@@ -1,5 +1,6 @@
 import { Link, useLocation } from '@remix-run/react'
 import { FC, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { twMerge } from 'tailwind-merge'
 
 import { AllProviderIcon } from '@/components/icons'
@@ -10,6 +11,7 @@ type Props = {
 }
 
 export const GameProviders: FC<Props> = ({ providers }) => {
+  const { t } = useTranslation('all-game')
   const { pathname } = useLocation()
   const selectedGroup = pathname.split('/')[2]
   const selectedProvider = pathname.split('/')[3]
@@ -67,7 +69,7 @@ export const GameProviders: FC<Props> = ({ providers }) => {
           className="text-white"
           onClick={() => setShowAll(!showAll)}
         >
-          Show {showAll ? 'Less' : 'All'}
+          {showAll ? t('provider.showLess') : t('provider.showAll')}
         </button>
       </div>
     </div>

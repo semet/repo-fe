@@ -1,10 +1,10 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { useTranslation } from 'react-i18next'
 
-import languages from '@/i18n'
+import { languageOptions } from '@/localization/i18n'
+
 export const LanguageSwitcher = () => {
   const { i18n } = useTranslation()
-  const supportedLanguages = languages.supportedLngs
 
   const changeLanguage = (lang: string) => {
     i18n.changeLanguage(lang)
@@ -20,15 +20,20 @@ export const LanguageSwitcher = () => {
       <MenuItems
         transition
         anchor="bottom"
-        className="z-50 w-12 origin-top-right rounded border bg-white transition duration-100 ease-out"
+        className="z-50 origin-top-right rounded border bg-white transition duration-100 ease-out"
       >
-        {supportedLanguages.map((lang) => (
-          <MenuItem key={lang}>
+        {languageOptions.map((lang) => (
+          <MenuItem key={lang.value}>
             <button
-              onClick={() => changeLanguage(lang)}
-              className="block px-2 data-[focus]:bg-blue-100"
+              onClick={() => changeLanguage(lang.value)}
+              className="flex w-full items-center gap-2 px-2 text-left data-[focus]:bg-blue-100"
             >
-              {lang.toUpperCase()}
+              <img
+                src={lang.flag}
+                alt={lang.value}
+                className="mx-auto h-4 w-4"
+              />
+              {lang.value.toUpperCase()}
             </button>
           </MenuItem>
         ))}

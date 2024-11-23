@@ -33,9 +33,9 @@ import {
   getWebSettingsRequest
 } from './apis/common'
 import { LayoutProvider, StyleProvider, UserProvider } from './contexts'
-import i18next from './i18next.server'
 import { promotionTokenCookie } from './libs/cookie.server'
 import { handleToken } from './libs/token'
+import i18next from './localization/i18next.server'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const locale = await i18next.getLocale(request)
@@ -59,6 +59,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     : undefined
 
   const showPromotion = webSettings.data.show_promotion.value
+
+  const headers = new Headers()
+  headers.append(
+    'Set-Cookie',
+    await promotionTokenCookie.serialize(showPromotion)
+  )
+
   return data(
     {
       locale,
@@ -78,9 +85,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       }
     },
     {
-      headers: {
-        'Set-Cookie': await promotionTokenCookie.serialize(showPromotion)
-      }
+      headers
     }
   )
 }

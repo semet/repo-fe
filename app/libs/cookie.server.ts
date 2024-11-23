@@ -40,3 +40,9 @@ export const promotionTokenCookie = createCookie('showPromotion', {
   secure: process.env.NODE_ENV === 'production',
   path: '/'
 })
+
+export const i18nCookie = createCookie('i18next', {
+  httpOnly: false,
+  sameSite: 'lax',
+  maxAge: 60 * 60 * 24 * 365
+})

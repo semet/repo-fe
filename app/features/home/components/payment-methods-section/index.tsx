@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { PaymentMethodCard } from '@/features/home'
 import { TBank, TBanksResponse } from '@/schemas/home'
@@ -12,6 +13,7 @@ type Accumulator = {
 }
 
 export const PaymentMethodsSection: FC<Props> = ({ banks }) => {
+  const { t } = useTranslation('home')
   const uniqueData = banks?.data
     ?.filter((bank) => bank.status === 1)
     .reduce<Accumulator>((acc, current) => {
@@ -30,7 +32,7 @@ export const PaymentMethodsSection: FC<Props> = ({ banks }) => {
   return (
     <div className="flex flex-col items-center gap-6 px-4 xl:px-24">
       <h2 className="text-center text-lg font-semibold uppercase text-white">
-        Payment Methods
+        {t('section.paymentMethod')}
       </h2>
       <div className="flex flex-wrap justify-center gap-6">
         {banksArray?.map((bank) => (
